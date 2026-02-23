@@ -1,20 +1,21 @@
 <?php
 
-// Allow requests from any origin
 header("Access-Control-Allow-Origin: *");
 
-// Allow specific headers (like JSON)
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Allow specific methods
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 
-// Set content type to JSON
 header("Content-Type: application/json");
 require ('./Controller/UserController.php');
 $input = json_decode(file_get_contents("php://input"), true);
 $process = $input['process'] ?? '';
 $id = $input['userId'] ?? null;
+$name=$input['Name'] ?? null;
+$email=$input['Email'] ?? null;
+$phone=$input['Phone'] ?? null;
+$address=$input['Address'] ?? null;
+$created=$input['Created'] ?? null;
 
 $controller = new Controller();
 switch($process){  
@@ -24,6 +25,14 @@ switch($process){
      break;
     case 'deleteUser':
       $response= $controller->handleProcess($process,$id);
+      echo $response;
+     break;
+     case 'addUser':
+      $response= $controller->addLogic($process,$id,$name,$email,$phone,$address,$created);
+      echo $response;
+     break;
+      case 'updateUser':
+      $response= $controller->addLogic($process,$id,$name,$email,$phone,$address,$created);
       echo $response;
      break;
 }

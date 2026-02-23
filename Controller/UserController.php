@@ -14,9 +14,18 @@ class Controller extends Model
           return json_encode($data);
       default:
         return json_encode(['message' => 'Invalid controller process']);
-        
-
     }
-   
   }
+  public function addLogic($process,$id,$name,$email,$phone,$address,$created){
+   switch ($process){    
+  case 'addUser':
+          $data = $this->addUser($name,$email,$phone,$address,$created);
+          return json_encode($data);
+          break;
+            case 'updateUser':
+          $data = $this->updateUser($id,$name,$email,$phone,$address,$created);
+          return json_encode($data);
+          break;
+  }
+  } 
 }
