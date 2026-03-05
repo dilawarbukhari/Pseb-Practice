@@ -1,0 +1,76 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Welcome Back!</h2>
+      <p>Login to your account</p>
+    </div>
+    <form   [formGroup] = loginForm>
+      <div class="form-group floating">
+            <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder=" "
+          formControlName="email"
+          required  
+        />
+        
+       <div 
+    class="error-message" 
+    *ngIf="loginForm.get('email')?.invalid && 
+           (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)">
+               Email is required.
+       </div>
+         </div>
+    
+    <!-- <div class="mb-3">
+      <label for="" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        name=""
+        id=""
+        aria-describedby="emailHelpId"
+        placeholder="abc@mail.com"
+      />
+      <small id="emailHelpId" class="form-text text-muted"
+        >Help text</small
+      >
+    </div>
+     is required.
+  </div>
+      </div> -->
+
+      <div class="form-group floating">
+         <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder=" "
+           formControlName="password"
+          required
+        />
+        <div 
+    class="error-message" 
+    *ngIf="loginForm.get('password')?.invalid && 
+           (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
+    Password is required.
+  </div>
+      </div>
+
+      <div class="form-group remember">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Remember me</label>
+      </div>
+
+      <button type="submit" (click)="onLogin()">Login</button>
+
+      <p class="signup-link">
+        Don't have an account?
+        <a routerLink="/register">Sign Up</a>
+      </p>
+    </form>
+  </div>
+</div>
