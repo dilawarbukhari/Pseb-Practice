@@ -3,11 +3,12 @@ require './Model/Model.php';
 
 class Controller extends Model
 {
-  public function handleProcess($process,$id)
+  public function handleProcess($process,$id,$accessToken)
   {
     switch ($process) {
       case 'getAllUser':
-        $data = $this->getAll();
+      
+        $data = $this->getAll($accessToken);
         return json_encode($data);
          case 'deleteUser':
           $data = $this->deleteUser($id);
@@ -27,5 +28,18 @@ class Controller extends Model
           return json_encode($data);
           break;
   }
-  } 
+  }
+    public function simplifyLogic($input){
+      $process= $input['process'];
+      switch ($process){
+         case 'registerUser':
+          $data = $this->registerUser($input);
+          return json_encode($data);
+          break;
+          case 'loginUser':
+             $data = $this->login($input);
+          return json_encode($data);
+          break;
+   } 
+}
 }
