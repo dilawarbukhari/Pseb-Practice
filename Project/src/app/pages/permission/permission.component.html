@@ -1,0 +1,175 @@
+<div class="container-fluid p-4 category-page">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold title">
+<i class="bi bi-grid me-2 text-primary"></i>
+Manage Permissions
+</h3>
+
+    <button class="btn btn-add px-4"   data-bs-toggle="modal"
+        data-bs-target="#categoryModal" (click)="addButton()">
+      <i class="bi bi-plus-circle me-2"></i> Add Permissions
+    </button>
+  </div>
+
+
+  <!-- SEARCH -->
+  <div class="search-box mb-4">
+
+    <div class="input-group">
+
+      <span class="input-group-text">
+        <i class="bi bi-search"></i>
+      </span>
+
+      <input type="text"
+             class="form-control"
+         [(ngModel)]="searchText"
+        (input)="searchDetails()"
+             placeholder="Search permission name...">
+
+    </div>
+
+  </div>
+
+
+
+  <!-- TABLE -->
+  <div class="table-card">
+
+    <table class="table align-middle mb-0">
+
+      <thead>
+        <tr>
+          <th>Sr. No</th>
+          <th>Permission Name</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let item of permissionsResponseList; let i=index">
+          <td>{{i+1}}</td>
+          <td class="fw-semibold">{{item.permission_name}}</td>
+
+          <td class="text-end">
+
+            <button class="btn btn-sm btn-edit me-2"  data-bs-toggle="modal"
+        data-bs-target="#categoryModal" (click)="updatedetails(item)">
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-sm btn-delete"     data-bs-toggle="modal"
+        data-bs-target="#deleteModal" (click)="deletePermission(item)">
+              <i class="bi bi-trash"></i>
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<!-- Add Category Modal -->
+
+<div class="modal fade" id="categoryModal">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content modal-theme">
+
+      <div class="modal-header border-0">
+        <h5 class="fw-bold">{{isEdit ? 'Add Permission' : 'Update Permission'}}</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+         <form [formGroup]="permissionForm">
+
+        <div class="mb-3">
+
+          <label class="form-label small fw-bold text-muted">
+            PERMISSION NAME
+          </label>
+
+          <input type="text"
+                 class="form-control form-control-theme"
+                 formControlName="permission_name"
+                 placeholder="e.g. Electronics">
+                  
+      <div class="error-message" 
+     *ngIf="permissionForm.get('permission_name')?.touched  &&  permissionForm.get('permission_name')?.invalid
+          && permissionForm.get('permission_name')?.hasError('required')">
+  Name is required.
+</div>
+        </div>
+
+        <div class="row g-2 mt-3">
+
+          <div class="col-6">
+            <button class="btn btn-light w-100 py-2"
+                    data-bs-dismiss="modal">
+              Cancel
+            </button>
+          </div>
+
+          <div class="col-6">
+            <button class="btn btn-theme w-100 py-2" (click)="isEdit ? addPermission() : updateData()" >
+            {{isEdit ? 'Save' : 'Update'}}
+            </button>
+          </div>
+
+        </div>
+</form>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+
+<div class="modal fade" id="deleteModal">
+
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+
+    <div class="modal-content delete-modal text-center p-4">
+
+      <div class="text-danger mb-3">
+        <i class="bi bi-exclamation-triangle-fill display-4"></i>
+      </div>
+
+      <h5 class="fw-bold" >Confirm Delete</h5>
+
+      <p class="text-muted">
+        Kya aap waqai is Permission ko delete karna chahte hain?
+      </p>
+
+      <div class="d-flex gap-2">
+
+        <button class="btn btn-light w-100"
+                data-bs-dismiss="modal">
+          No
+        </button>
+
+        <button class="btn btn-danger w-100" data-bs-dismiss="modal" (click)="confirmDelete()">
+          Yes, Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

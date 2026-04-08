@@ -10,7 +10,6 @@ export class AuthService {
    Url = 'http://localhost/MVC/route.php';
 
   constructor(private http : HttpClient) { }
-
   login(data:any):Observable<any>{
     const payload = {
     ...data,          // email & password
@@ -22,6 +21,13 @@ export class AuthService {
     const payload = {
     ...data,  
     process: 'registerUser'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
+ changePassword(data:any):Observable<any>{
+    const payload = {
+    ...data,  
+    process: 'changePassword'
   };
     return this.http.post<any>(this.Url, payload);
 }

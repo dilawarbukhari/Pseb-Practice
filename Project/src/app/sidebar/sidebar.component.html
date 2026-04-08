@@ -1,1 +1,56 @@
-<p>sidebar works!</p>
+<nav class="sidebar d-flex flex-column">
+  <div class="sidebar-brand px-3 py-3">
+    <span class="brand-badge">IMS</span>
+    <span class="ms-2">Inventory Management </span>
+
+  </div>
+
+  <ul class="nav nav-pills flex-column px-2">
+    <li class="nav-item">
+      <a class="nav-link " routerLinkActive="active" routerLink="/pages/dashboard">Dashboard</a>
+    </li>
+      <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" *ngIf="role == 'Super Admin' || role == ' Admin'"  routerLink="/pages/user">User Management
+      </a>
+    </li>
+     <li class="nav-item" >
+      <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Admin' || role === 'Super Admin'"  routerLink="/pages/rolepermission">Roles & Permissions
+      </a>
+    </li>
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="role === 'Admin' || role === 'Super Admin'"   routerLink="/pages/permission">Manage Permissions</a>
+      </li>
+        <li class="nav-item">
+      <a class="nav-link" (click)="navigate()">Categories</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/pages/product">Product Management</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  routerLink="/pages/settings">Settings</a>
+    </li>
+
+  </ul>
+
+ <div class="sidebar-footer mt-auto px-3 py-3 border-top">
+  <div class="d-flex align-items-center justify-content-between">
+
+    <!-- User Info -->
+    <div class="d-flex align-items-center">
+      <div class="avatar me-2">DB</div>
+      <div>
+        <div class="fw-semibold">Dilawar Bukhari</div>
+        <small class="text-muted">Admin</small>
+      </div>
+    </div>
+
+    <!-- Logout Button -->
+    <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+            (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+      Logout
+    </button>
+
+  </div>
+</div>
+</nav>
