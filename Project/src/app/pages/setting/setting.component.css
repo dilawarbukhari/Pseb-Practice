@@ -1,0 +1,217 @@
+/* Page Background */
+
+.category-page{
+background:linear-gradient(180deg,#f8fafc,#eef2ff);
+min-height:100vh;
+padding-bottom:40px;
+}
+
+
+/* Page Title */
+
+.title{
+color:#1e293b;
+font-weight:700;
+letter-spacing:.3px;
+}
+
+
+/* Add Button */
+
+.btn-add{
+background:linear-gradient(135deg,#6a11cb,#2575fc);
+border:none;
+color:white;
+border-radius:10px;
+font-weight:500;
+padding:10px 20px;
+box-shadow:0 4px 12px rgba(106,17,203,0.25);
+transition:all .25s ease;
+}
+
+.btn-add:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 16px rgba(106,17,203,0.35);
+color:white;
+}
+
+
+/* Search Box */
+
+.search-box{
+background:#ffffff;
+padding:18px;
+border-radius:12px;
+box-shadow:0 4px 14px rgba(0,0,0,0.06);
+border:1px solid #f1f5f9;
+}
+
+.search-box .input-group-text{
+background:#fff;
+border-right:none;
+color:#64748b;
+}
+
+.search-box input{
+border-left:none;
+padding:10px;
+}
+
+.search-box input:focus{
+box-shadow:none;
+border-color:#6366f1;
+}
+
+
+/* Table Card */
+
+.table-card{
+background:#ffffff;
+border-radius:14px;
+overflow:hidden;
+margin-top:20px;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+border:1px solid #f1f5f9;
+}
+
+
+/* Table Header */
+
+.table thead{
+background:linear-gradient(90deg,#eef2ff,#f8fafc);
+font-weight:600;
+color:#334155;
+}
+
+
+/* Table Rows */
+
+.table tbody tr{
+transition:all .2s ease;
+}
+
+.table tbody tr:hover{
+background:#f1f5ff;
+transform:scale(1.002);
+}
+
+
+/* Action Buttons */
+
+.btn-edit{
+border:1px solid #3b82f6;
+color:#3b82f6;
+border-radius:7px;
+  padding:8px 16px; 
+transition:.2s;
+}
+
+.btn-edit:hover{
+background:#3b82f6;
+color:white;
+box-shadow:0 3px 8px rgba(59,130,246,.3);
+}
+
+
+.btn-delete{
+border:1px solid #ef4444;
+color:#ef4444;
+border-radius:7px;
+padding:4px 10px;
+transition:.2s;
+}
+
+.btn-delete:hover{
+background:#ef4444;
+color:white;
+box-shadow:0 3px 8px rgba(239,68,68,.3);
+}
+
+
+/* Modal */
+
+.modal-theme{
+border:none;
+border-radius:16px;
+box-shadow:0 8px 30px rgba(0,0,0,0.15);
+}
+
+
+/* Modal Input */
+
+.form-control-theme{
+border-radius:10px;
+padding:10px;
+border:1px solid #e2e8f0;
+}
+
+.form-control-theme:focus{
+border-color:#6366f1;
+box-shadow:0 0 0 2px rgba(99,102,241,.1);
+}
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Delete Modal */
+
+.delete-modal{
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}/* Profile Card Enhancement */
+.profile-card{
+  border-radius:16px;
+  background:linear-gradient(145deg,#ffffff,#f8fafc);
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  transition:.3s;
+}
+
+.profile-card:hover{
+  transform:translateY(-3px);
+}
+
+/* Info Box */
+.info-box{
+  background:#f9fafb;
+  border-radius:12px;
+  padding:15px;
+  border:1px solid #e5e7eb;
+  transition:.25s;
+}
+
+.info-box:hover{
+  background:#eef2ff;
+  border-color:#6366f1;
+}
+
+/* Label */
+.info-label{
+  font-size:12px;
+  color:#6b7280;
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+/* Value */
+.info-value{
+  font-size:16px;
+  font-weight:600;
+  color:#1e293b;
+}
+
+/* Edit Button Upgrade */
+.btn-edit{
+  border:1px solid #6366f1;
+  color:#6366f1;
+  border-radius:8px;
+  font-weight:500;
+  transition:.25s;
+}
+
+.btn-edit:hover{
+  background:#6366f1;
+  color:white;
+  box-shadow:0 4px 10px rgba(99,102,241,.3);
+}

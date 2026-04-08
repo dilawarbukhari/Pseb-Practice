@@ -1,0 +1,128 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Create Account</h2>
+      <p>Register to get started</p>
+    </div>
+
+    <form [formGroup]="registerForm" >
+
+      <!-- First Name -->
+      <div class="form-group floating">
+        <input
+          type="text"
+          id="name"
+          placeholder=" "
+          formControlName="firstname"
+          required
+        />
+        <label for="name">First Name</label>
+
+        <!-- Error message -->
+  <div 
+    class="error-message" 
+    *ngIf="registerForm.get('firstname')?.invalid && 
+           (registerForm.get('firstname')?.dirty || registerForm.get('firstname')?.touched)">
+    First Name is required.
+  </div>
+  
+      </div>
+  <!-- Last name -->
+ <div class="form-group floating">
+        <input
+          type="text"
+          id="name"
+          placeholder=" "
+          formControlName="lastname"
+          required
+        />
+        <label for="name">Last Name</label>
+        <!-- Error message -->
+  <div 
+    class="error-message" 
+    *ngIf="registerForm.get('lastname')?.invalid && 
+           (registerForm.get('lastname')?.dirty || registerForm.get('lastname')?.touched)">
+   Last Name is required.
+  </div>
+      </div>
+  <!-- Email -->
+    
+      <div class="form-group floating">
+        <input
+          type="email"
+          id="email"
+          placeholder=" "
+          formControlName="email"
+          required
+        />
+        <label for="email">Email</label>
+        <!-- Error message -->
+  <div 
+    class="error-message" 
+    *ngIf="registerForm.get('email')?.invalid && 
+           (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)">
+    Email is required.
+  </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group floating">
+        <input
+          type="password"
+          id="password"
+          placeholder=" "
+          formControlName="password"
+          required
+        />
+        <label for="password">Password</label>
+        <!-- Error message -->
+  <div 
+    class="error-message" 
+    *ngIf="registerForm.get('password')?.invalid && 
+           (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)">
+  <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</span>
+    <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters.</span>
+    <span *ngIf="registerForm.get('password')?.errors?.['pattern']">
+      Password must contain at least one letter, one number & one special character.
+    </span>
+  </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group floating">
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder=" "
+          formControlName="confirmPassword"
+          required
+        />
+        <label for="confirmPassword">Confirm Password</label>
+        <!-- Error message -->
+  <div 
+    class="error-message" 
+    *ngIf="registerForm.get('confirmPassword')?.invalid && 
+           (registerForm.get('confirmPassword')?.dirty || registerForm.get('confirmPassword')?.touched)">
+     <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirm Password is required.</span>
+    <span *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']">Passwords do not match.</span>
+  </div>
+      </div>
+
+      <!-- Remember Me
+      <div class="form-group remember">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Remember me</label>
+      </div> -->
+
+      <button type="submit"  (click)="onRegister()">
+        Register
+      </button>
+
+      <p class="signup-link">
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
+
+    </form>
+  </div>
+</div>

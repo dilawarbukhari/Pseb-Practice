@@ -1,0 +1,211 @@
+
+<div class="container-fluid p-4 user-page">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h3 class="fw-bold title">
+      <i class="bi bi-people me-2 text-primary"></i>
+      User Management
+    </h3>
+
+    <button class="btn btn-add px-4"
+            data-bs-toggle="modal"
+            data-bs-target="#userModal"
+            (click)="addButton()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Add User
+    </button>
+
+  </div>
+
+  <!-- SEARCH -->
+
+  <div class="search-box mb-4">
+    <div class="input-group">
+      <span class="input-group-text">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="searchText"
+             (input)="searchDetails()"
+             placeholder="Search user name or email...">
+    </div>
+  </div>
+
+  <!-- TABLE -->
+
+  <div class="table-card">
+
+    <table class="table align-middle mb-0">
+
+      <thead>
+        <tr>
+          <th>Sr. No</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let user of userResponseList; let i=index">
+          <td>{{i+1}}</td>
+          <td class="fw-semibold">{{user.firstname}}</td>
+          <td>{{user.lastname}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.role_name}}</td>
+          <td class="text-end">
+
+            <button class="btn btn-sm btn-edit me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#userModal"
+                    (click)="updatedetails(user)">
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-sm btn-delete"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal"
+                    (click)="deleteUser(user)">
+              <i class="bi bi-trash"></i>
+            </button>
+
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<!-- User Modal -->
+
+<div class="modal fade" id="userModal">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content modal-theme">
+
+      <div class="modal-header border-0">
+
+        <h5 class="fw-bold">
+          {{isEdit ? 'Add User':'Update User'  }}
+        </h5>
+
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <form [formGroup]="userForm">
+
+          <!-- FIRST NAME -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">First Name</label>
+            <input type="text"
+                   class="form-control form-control-theme"
+                   formControlName="firstname"
+                   placeholder="Enter first name">
+            <div class="error-message" 
+                 *ngIf="userForm.get('first_name')?.touched && userForm.get('first_name')?.invalid && userForm.get('first_name')?.hasError('required')">
+              First name is required.
+            </div>
+          </div>
+
+          <!-- LAST NAME -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">Last Name</label>
+            <input type="text"
+                   class="form-control form-control-theme"
+                   formControlName="lastname"
+                   placeholder="Enter last name">
+            <div class="error-message" 
+                 *ngIf="userForm.get('last_name')?.touched && userForm.get('last_name')?.invalid && userForm.get('last_name')?.hasError('required')">
+              Last name is required.
+            </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">Email</label>
+            <input type="email"
+                   class="form-control form-control-theme"
+                   formControlName="email"
+                   placeholder="Enter email">
+            <div class="error-message" 
+                 *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid && userForm.get('email')?.hasError('required')">
+              Email is required.
+            </div>
+            <div class="error-message" 
+                 *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid && userForm.get('email')?.hasError('email')">
+              Invalid email format.
+            </div>
+          </div>
+
+          <!-- ROLE -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">Role</label>
+            <select class="form-control form-control-theme" formControlName="role_Id">
+              <option value='' disabled>Select Role</option>
+              <option *ngFor="let role of roleResponseList" [value]="role.role_Id">
+                {{role.role_name}}
+              </option>
+            </select>
+            <div class="error-message" 
+                 *ngIf="userForm.get('role_id')?.touched && userForm.get('role_id')?.invalid && userForm.get('role_id')?.hasError('required')">
+              Role is required.
+            </div>
+          </div>
+
+          <!-- BUTTONS -->
+          <div class="row g-2 mt-3">
+            <div class="col-6">
+              <button class="btn btn-light w-100 py-2" data-bs-dismiss="modal">
+                Cancel
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-theme w-100 py-2"
+                      (click)="isEdit ?  addUser(): updateUser()">
+                {{isEdit ? 'Save':'Update'  }}
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Delete Confirmation Modal (Same as Product) -->
+
+<div class="modal fade" id="deleteModal">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content delete-modal text-center p-4">
+      <div class="text-danger mb-3">
+        <i class="bi bi-exclamation-triangle-fill display-4"></i>
+      </div>
+      <h5 class="fw-bold">Confirm Delete</h5>
+      <p class="text-muted">
+        Kya aap waqai is user ko delete karna chahte hain?
+      </p>
+      <div class="d-flex gap-2">
+        <button class="btn btn-light w-100" data-bs-dismiss="modal">No</button>
+        <button class="btn btn-danger w-100" data-bs-dismiss="modal" (click)="confirmDelete()">
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

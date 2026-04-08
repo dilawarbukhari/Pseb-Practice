@@ -1,0 +1,190 @@
+<div class="container-fluid mt-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold">Roles & Permissions</h4>
+
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#roleModal" (click)="openModel()">
+      + Add Role
+    </button>
+  </div>
+
+  <div class="row">
+    
+
+    <!-- ================= ROLES ================= -->
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+
+        <div class="card-header fw-semibold">
+          All Roles
+        </div>
+
+        <ul class="list-group list-group-flush">
+
+          <li 
+            class="list-group-item d-flex justify-content-between align-items-center"
+            *ngFor="let role of roleResponseList"
+            [class.active]="selectedRoleId === role.role_Id">
+
+            <!-- ROLE NAME -->
+            <span 
+              (click)="selectRole(role)" 
+              style="cursor:pointer;">
+              {{ role?.role_name }}
+            </span>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex gap-1">
+
+              <button 
+                class="btn btn-sm btn-outline-primary"
+                data-bs-toggle="modal" data-bs-target="#roleModal"
+                (click)="editRole(role)">
+                <i class="bi bi-pencil"></i>
+              </button>
+
+              <button 
+                class="btn btn-sm btn-outline-danger"
+                (click)="openDeleteModal(role)">
+                <i class="bi bi-trash"></i>
+              </button>
+
+            </div>
+
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= PERMISSIONS ================= -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+
+        <div class="card-header fw-semibold">
+          Permissions
+        </div>
+
+        <div class="card-body">
+
+          <div class="row">
+
+            <div 
+              class="col-md-4 mb-3"
+              *ngFor="let permission of permissionsResponseList">
+
+              <div class="form-check">
+
+                <input 
+                  type="checkbox"
+                  class="form-check-input"
+            [checked]="isPermissionAssigned(permission.permission_Id)"
+      (change)="onPermissionChange(permission.permission_Id, $event)"
+  [id]="'perm_' + permission.permission_Id"
+                 >
+
+                <label 
+                  class="form-check-label"
+                 >
+
+                  {{ permission.permission_name }}
+
+                </label>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SAVE BUTTON -->
+          <div class="mt-3 text-end">
+            <button 
+              class="btn btn-success"
+              [disabled]="!selectedRoleId"
+              (click)="savePermissions()">
+
+              Save Permissions
+
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ADD ROLE MODAL ================= -->
+<div class="modal fade" id="roleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">{{IsEdit ? 'Edit Role' : 'Add Role'}}</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <label class="form-label">Role Name</label>
+        <input 
+          type="text"
+          class="form-control"
+          [(ngModel)]="roleName"
+          placeholder="Enter role name">
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <button 
+          class="btn btn-success"
+          (click)= " IsEdit ? updateRole() : saveRole() ">
+
+       {{IsEdit ? 'Update Role' : 'Add Role'}}
+
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= DELETE MODAL ================= -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">Delete Role</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to delete 
+        <strong>{{roleName}}</strong>?
+      </div>
+
+      <div class="modal-footer">
+
+        <button 
+          class="btn btn-secondary"
+          data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <button 
+          class="btn btn-danger"
+          (click)="deleteRole()">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
