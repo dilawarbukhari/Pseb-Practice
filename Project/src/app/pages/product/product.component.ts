@@ -5,6 +5,7 @@ import { ProductService } from '../../Service/product.service';
 import { CategoryService } from '../../Service/category.service';
 import { CommonModule } from '@angular/common';
 import { UpdateProductRequest } from '../../Interface/updateProduct';
+import { DeferBlockFixture } from '@angular/core/testing';
 
 @Component({
   selector: 'app-product',
@@ -13,7 +14,11 @@ import { UpdateProductRequest } from '../../Interface/updateProduct';
   styleUrl: './product.component.css'
 })
 export class ProductComponent {
+  imagePreview: string | ArrayBuffer | null = null;
+  isUploading = false;
+fileName: string = '';
  productForm! :FormGroup;
+ SelectedFile: File | null = null;
   categoryResponseList:any =[];
   productResponseList:any=[];
   searchResponseList:any=[];
@@ -34,8 +39,10 @@ SetValidation(){
    this.productForm = this._fb.group({
   product_name: ['', Validators.required],
   category_id: ['', Validators.required],
+  image: ['', Validators.required],
   price: ['', Validators.required],
-  quantity: ['', Validators.required]
+  quantity: ['', Validators.required],
+  description:['', Validators.required]
 });
 }
 addButton(){
@@ -48,7 +55,18 @@ addProduct(){
    this.productForm.markAllAsTouched();
     return;
   }
-this._productService.addProduct(this.productForm.value).subscribe({
+  const formdata = new FormData();
+formdata.append('product_name', this.productForm.get('product_name')?.value);
+formdata.append('category_id', this.productForm.get('category_id')?.value);
+formdata.append('price', this.productForm.get('price')?.value);
+formdata.append('quantity', this.productForm.get('quantity')?.value);
+formdata.append('image', this.productForm.get('image')?.value);
+formdata.append('description', this.productForm.get('description')?.value);
+formdata.append('process', 'addProduct');
+// if (this.fileName) {
+//   formdata.append('image', this.fileName);
+// }
+this._productService.addProduct(formdata).subscribe({
   next:(response:any)=>{
  if(response[1].status !== "200"){
      this._toasterService.error(response[0].message, 'Warning');
@@ -65,7 +83,6 @@ this._productService.addProduct(this.productForm.value).subscribe({
 });
 }
 searchDetails(){
-  debugger
 if(this.searchText ==''){
   this.productResponseList= this.searchResponseList;
   return;
@@ -79,10 +96,37 @@ if(this.searchText ==''){
         .includes(this.searchText.toLowerCase()) ||  user.price.includes(this.searchText) ;
  })
 }
-getAllProduct(){
+
+onFileSelected(event: any) {
   debugger
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  this.fileName = file.name;
+  this.isUploading = true;
+   const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
+  // Simulate upload (replace with API call)
+  setTimeout(() => {
+    this.isUploading = false;
+  }, 2000);
+    this.productForm.patchValue({
+    image: file
+  });
+}
+
+
+
+getAllProduct(){
+
 this._productService.getProduct().subscribe({
   next:(response:any)=>{
+      debugger
       this.productResponseList =response[0];
       this.searchResponseList=response[0];
   },
@@ -121,18 +165,29 @@ deleteProduct(response:any){
     } }
   })
   }
-  updatedetails(response:any){
-    debugger
+  updatedetails(response:any){ 
     this.isEdit=false;
-    this.productForm.patchValue(response);
-    this.product_Id= response.product_Id;
+        this.imagePreview = response.image;
+        this.productForm.patchValue({
+          product_name: response.product_name,
+          category_id: response.category_id,
+          price: response.price,
+          quantity: response.quantity
+        });
+        this.product_Id= response.product_Id;
   }
  updateProduct(){
-  debugger
-  this.updateProductRequest= this.productForm.value;
-  this.updateProductRequest.product_Id= this.product_Id;
+   const formdata = new FormData();
+formdata.append('product_name', this.productForm.get('product_name')?.value);
+formdata.append('category_id', this.productForm.get('category_id')?.value);
+formdata.append('price', this.productForm.get('price')?.value);
+formdata.append('quantity', this.productForm.get('quantity')?.value);
+formdata.append('image', this.productForm.get('image')?.value);
+formdata.append('description', this.productForm.get('description')?.value);
+formdata.append('process', 'updateProduct');
+formdata.append('product_Id',String(this.product_Id));
 
-  this._productService.updateProduct(this.updateProductRequest).subscribe({
+  this._productService.updateProduct(formdata).subscribe({
   next:(response:any)=>{
  if(response[1].status !== "200"){
      this._toasterService.error(response[0].message, 'Warning');

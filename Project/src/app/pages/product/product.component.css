@@ -1,11 +1,33 @@
 /* Page Background */
-
+.product-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;   /* keeps image ratio, crops extra */
+  border-radius: 8px;  /* optional rounded look */
+}
 .category-page{
 background:linear-gradient(180deg,#f8fafc,#eef2ff);
 min-height:100vh;
 padding-bottom:40px;
 }
+.preview-img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
+.change-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0.9;
+}
 
 /* Page Title */
 

@@ -1,0 +1,104 @@
+
+<nav class="navbar bg-light px-3">
+  <div class="container-fluid d-flex justify-content-between">
+
+    <!-- Left side (Logo / Title) -->
+    <span class="navbar-brand mb-0 h1">My Store</span>
+
+    <!-- Right side (Cart Icon) -->
+<div class="position-relative" (click)="goToCart()" style="cursor: pointer;">
+  
+  <!-- Cart Icon -->
+  <i class="bi bi-cart3 fs-4"></i>
+
+  <!-- Badge -->
+  <span 
+    *ngIf="cartCount > 0"
+    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    {{ cartCount }}
+  </span>
+
+</div>
+
+  </div>
+</nav>
+
+
+<!-- Product detail modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productModalLabel">{{ selectedProduct?.product_name || 'Product details' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img *ngIf="selectedProduct?.image" [src]="selectedProduct.image" class="img-fluid mb-3" alt="{{ selectedProduct?.product_name }}">
+        <p><strong>Category:</strong> {{ selectedProduct?.category_name }}</p>
+        <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+        <p>{{ selectedProduct?.description }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="openModal(selectedProduct)">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-3 col-md-6 mb-4" *ngFor="let product of productResponseList">
+        <div class="card h-100 shadow-sm">
+
+          <!-- Image -->
+          <img 
+            [src]="product.image" 
+            class="card-img-top image" 
+            alt="product image"
+            style="height: 200px; object-fit: cover;"
+          >
+
+          <!-- Card Body -->
+          <div class="card-body">
+           
+
+            <h5 class="card-title">
+              {{ product.product_name }}
+            </h5>
+
+             <h6 class="text-muted text-uppercase small">
+              {{ product.category_name }}
+            </h6>
+  
+            <p class="card-text fw-bold">
+              ${{ product.price }}
+            </p>
+            <p class="card-text ">
+              ${{ product.description }}
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="card-footer bg-white border-0 d-grid gap-2">
+            <button 
+              class="btn btn-outline-primary w-100"
+              (click)="openModal(product)">
+              View Details
+            </button>
+            <button 
+              class="btn btn-primary w-100"
+              (click)="addtoCart(product)">
+              Add to Cart
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+

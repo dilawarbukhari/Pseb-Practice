@@ -11,13 +11,12 @@ export class ProductService {
   constructor(private _http : HttpClient) { 
   }
  token= localStorage.getItem('accessToken')
-addProduct(data:any):Observable<any>{
- const payload ={
-...data,
- process: 'addProduct',
- accessToken: this.token
- }
-return this._http.post<any>(this.Url,payload);
+addProduct(formdata: FormData):Observable<any>{
+//  const payload ={
+// ...formdata,
+//  process: 'addProduct',
+//  }
+return this._http.post<any>(this.Url,formdata);
 }
 deleteProduct(id:number):Observable<any>{
   debugger
@@ -35,13 +34,13 @@ getProduct():Observable<any>{
  }
 return this._http.post<any>(this.Url,payload);
 }
-updateProduct(data:any):Observable<any>{
+updateProduct(formdata:FormData):Observable<any>{
   debugger
-  const payload ={
-    ...data,
- process: 'updateProduct',
- accessToken: this.token
- }
-return this._http.post<any>(this.Url,payload);
+//   const payload ={
+//     ...data,
+//  process: 'updateProduct',
+//  accessToken: this.token
+//  }
+return this._http.post<any>(this.Url,formdata);
 }
 }

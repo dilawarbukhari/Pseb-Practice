@@ -12,30 +12,34 @@ import { SettingComponent } from './pages/setting/setting.component';
 import { RolepermissionComponent } from './pages/rolepermission/rolepermission.component';
 import { PermissionComponent } from './pages/permission/permission.component';
 import { ForgetpasswordComponent } from './auth/forgetpassword/forgetpassword.component';
+import { UserproductComponent } from './pages/userproduct/userproduct.component';
+import { CartComponent } from './pages/cart/cart.component';
 
 
 export const routes: Routes = [
 
-{ path: 'login', component: LoginComponent },
-  { path: 'forgotpassword', component: ForgetpasswordComponent},
-{ path: 'register', component: RegisterComponent },
-{ path: '', component: LoginComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'forgotpassword', component: ForgetpasswordComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: '', component: LoginComponent },
 
-{
-  path: 'pages',
-  component: PageComponent,
-  children: [
+  {
+    path: 'pages',
+    component: PageComponent,
+    children: [
 
-    { path: '', component: DashboardComponent },
-     { path: 'user', component: UsermanagementComponent },
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'category', component: CategoryComponent },
-    { path: 'product', component: ProductComponent },
-    { path: 'settings', component: SettingComponent },
-     { path: 'rolepermission', component: RolepermissionComponent },
-     { path: 'permission', component: PermissionComponent },
-  
-  ]
-}
+      { path: '', component: DashboardComponent },
+      { path: 'user', component: UsermanagementComponent },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'category', component: CategoryComponent },
+      { path: 'product', component: ProductComponent },
+      { path: 'userproduct', component: UserproductComponent },
+      { path: 'cart', component: CartComponent },
+      { path: 'settings', component: SettingComponent },
+      { path: 'rolepermission', component: RolepermissionComponent },
+      { path: 'permission', component: PermissionComponent },
+
+    ]
+  }
 
 ];

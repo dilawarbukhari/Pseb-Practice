@@ -1,0 +1,6 @@
+.image{
+    object-fit: initial !important;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
