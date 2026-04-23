@@ -2,8 +2,12 @@
 require './jwtHandler.php';
 require './DbContext/db.php';
 require './EmailServer.php';
+require './vendor/autoload.php';
+require './Configuration.php';
 
 use Firebase\JWT\JWT;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Api\Admin\AdminApi;
 
 class Model extends db
 {
@@ -441,7 +445,7 @@ class Model extends db
                 ["status" => "400"]
             ];
         }
-        $sql = 'Select p.product_Id , p.product_name,p.category_id,c.category_name,p.price,p.quantity  from products p Join categories c On c.category_id = p.category_id   Where p.isDeleted !=true AND c.isDeleted != true;';
+        $sql = 'Select p.product_Id ,p.description,P.image, p.product_name,p.category_id,c.category_name,p.price,p.oldPrice,p.quantity  from products p Join categories c On c.category_id = p.category_id   Where p.isDeleted !=true AND c.isDeleted != true;';
 
         $query = $this->conn->prepare($sql);
         $query->execute();
@@ -576,7 +580,6 @@ class Model extends db
     }
     public function getAllUser($input)
     {
-
         if (!$this->checkToken($this-> getBearerToken())) {
             return [['message' => 'Please login again'],  ["status" => "400"]];
         }
@@ -599,50 +602,109 @@ JOIN role r ON s.role_Id = r.role_Id
 WHERE s.isDeleted != true
   AND r.isDeleted != true
   AND s.Id != ?';
-
         $query = $this->conn->prepare($sql);
         $query->bind_param("i", $userId);
         $query->execute();
         $result = $query->get_result();
-
         if (!$result->num_rows > 0) {
             return ["message " => 'No rows effected'];
         }
         $User[] = $result->fetch_all(MYSQLI_ASSOC);
         return $User;
     }
-    public function addProduct($input)
-    {
-        if (!$this->checkToken($this-> getBearerToken())) {
-            return [['message' => 'Please login again'],  ["status" => "400"]];
-        }
+public function addProduct($input, $file = null)
+{
 
-        $name = $input['product_name'];
-        $categoryid = $input['category_id'];
-        $price = $input['price'];
-        $quantity = $input['quantity'];
-        $userId = $this->getUserId($this-> getBearerToken());
-        if (!$this->hasPermission($userId, "create_product")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
-        $created_at = date('Y-m-d H:i:s', time());
-
-        $sql = "INSERT into products (product_name,category_id,price,quantity,created_by,created_at) values (?,?,?,?,?,?)";
-        $query = $this->conn->prepare($sql);
-        $query->bind_param('siiiis', $name, $categoryid, $price, $quantity, $userId, $created_at);
-        $query->execute();
-
-        if (!$query->affected_rows > 0) {
-            return [
-                ['message' => 'Data not Successfully added'],
-                ["status" => "400"]
-            ];
-        }
-        return [['message' => 'Data Successfully added'], ["status" => "200"]];
+    if (!$this->checkToken($this->getBearerToken())) {
+        return [
+            ['message' => 'Please login again'],
+            ["status" => "400"]
+        ];
     }
+
+    $userId = $this->getUserId($this->getBearerToken());
+
+    if (!$this->hasPermission($userId, "create_product")) {
+        return [
+            ["message" => "you have no permission to do the process"],
+            ["status" => "400"]
+        ];
+    }
+    $name = $input['product_name'];
+    $categoryid = $input['category_id'];
+    $price = $input['price'];
+    $quantity = $input['quantity'];
+    $description= $input['description'];
+    $oldPrice=$input['oldPrice'];
+
+    $imagePath = null;
+    $imagePublicId = null;
+
+    if (!empty($_FILES['image']['tmp_name'])) {
+
+        try {
+
+            $uploadResult = (new UploadApi())->upload(
+            $_FILES['image']['tmp_name'],
+            ["folder" => "products"]
+            );["folder" => "products"];
+
+            $imagePath = $uploadResult['secure_url'];
+            $imagePublicId = $uploadResult['public_id'];
+    // var_dump($imagePublicId);
+    //         die;
+          
+
+        } catch (Exception $e) {
+            return [
+                ['message' => 'Image upload failed: ' . $e->getMessage()],
+                ["status" => "400"]
+            ];
+        }
+    }
+
+    $created_at = date('Y-m-d H:i:s');
+
+
+    $sql = "INSERT INTO products 
+            (product_name, Image,image_Id, category_id, price, oldPrice, quantity,Description, created_by, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
+
+    $query = $this->conn->prepare($sql);
+
+    $query->bind_param(
+        'sssiiiisis',
+        $name,
+        $imagePath,
+        $imagePublicId,
+        $categoryid,
+        $price,
+        $oldPrice   ,
+        $quantity,
+        $description,
+        $userId,
+        $created_at
+    );
+
+    $query->execute();
+
+    if ($query->affected_rows <= 0) {
+        return [
+            ['message' => 'Data not successfully added'],
+            ["status" => "400"]
+        ];
+    }
+
+    return [
+        [
+            'message' => 'Data successfully added',
+            // 'image_url' => $imagePath,
+            // 'image_id' => $imagePublicId
+        ],
+        ["status" => "200"]
+    ];
+}
+
     public function login($input)
 {
     $email = $input['email'];
@@ -725,8 +787,7 @@ WHERE s.isDeleted != true
 }
     public function changePassword($input)
     {    
-        //    $userId = $this->getUserId($this-> getBearerToken());
-           $email= $input['email'];
+         $email= $input['email'];
         $oldPassword = $input['oldPassword'];
         $password = $input['newPassword'];
         $checkpassword = $input['confirmPassword'];
@@ -736,7 +797,6 @@ WHERE s.isDeleted != true
             : 0;
         $hashpassword = password_hash($password, PASSWORD_DEFAULT);
         if ($password !== $checkpassword) {
-
             return [
                 ['message' => 'Password not match'],
                 ['status' => '400']
@@ -811,8 +871,7 @@ WHERE s.isDeleted != true
              return [
                 ['message' => 'Password update Successfully'],
                 ['status' => '200']
-            ];
-        
+            ];       
     }
     public function registerUser($input)
     {
@@ -1016,40 +1075,99 @@ WHERE s.isDeleted != true
         ];
     }
 
-    public function updateProduct($input)
-    {
-        if (!$this->checkToken($this-> getBearerToken())) {
-            return [['message' => 'Please login again'],  ["status" => "400"]];
-        }
-        $userId = $this->getUserId($this-> getBearerToken());
-        if (!$this->hasPermission($userId, "update_product")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
-        $name = $input['product_name'];
-        $categoryid = $input['category_id'];
-        $price = $input['price'];
-        $quantity = $input['quantity'];
-        $id = $input["product_Id"];
-        $update_at = date('Y-m-d H:i:s', time());
 
-        $sql = "update products  Set product_name=?,category_id=?, price=? , quantity=?, updated_by= ?  , updated_at=?  Where  product_Id=? ";
-        $query = $this->conn->prepare($sql);
-        $query->bind_param('siiiisi', $name, $categoryid, $price, $quantity, $userId, $update_at, $id);
-        $query->execute();
-        if (!($query->affected_rows > 0)) {
-            return [
-                ['message' => 'Data not updated successfully'],
-                ["status" => "400"]
-            ];
-        }
+public function updateProduct($input)
+{
+  
+
+    if (!$this->checkToken($this->getBearerToken())) {
+        return [['message' => 'Please login again'], ["status" => "400"]];
+    }
+
+    $userId = $this->getUserId($this->getBearerToken());
+
+    if (!$this->hasPermission($userId, "update_product")) {
         return [
-            ['message' => 'Data has been updated successfully'],
-            ["status" => "200"]
+            ["message" => "you have no permission to do the process"],
+            ["status" => "400"]
         ];
     }
+    $name = $input['product_name'];
+    $categoryid = $input['category_id'];
+    $price = $input['price'];
+    $quantity = $input['quantity'];
+    $description=$input['description'];
+    $oldPrice=$input['oldPrice'];
+    $id = (int) $input["product_Id"];
+    $update_at = date('Y-m-d H:i:s');
+
+    $stmt = $this->conn->prepare("SELECT Image, image_Id FROM products WHERE product_Id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
+    $imagePath = $result['Image'] ?? null;
+    $publicId  = $result['image_Id'] ?? null;
+
+ 
+  if (!empty($_FILES['image']['tmp_name'])) {
+
+    if (!empty($publicId)) {
+        (new AdminApi())->deleteAssets([$publicId]);
+    }
+        $uploadResult = (new UploadApi())->upload(
+        $_FILES['image']['tmp_name'],
+        ["folder" => "products"]
+    );
+
+    $imagePath = $uploadResult['secure_url'];
+
+    $publicId  = $uploadResult['public_id'];
+}
+
+    $sql = "UPDATE products 
+            SET product_name=?, 
+                 Image=?,
+                 image_Id=?,
+                category_id=?, 
+                price=?,
+                oldPrice=?, 
+                quantity=?, 
+                Description=?,
+                updated_by=?, 
+                updated_at=? 
+            WHERE product_Id=?";
+
+    $query = $this->conn->prepare($sql);
+
+    $query->bind_param(
+        'sssiiiisisi', $name,
+        $imagePath,
+        $publicId,
+        $categoryid,
+        $price,
+        $oldPrice,
+        $quantity,
+        $description,
+        $userId,
+        $update_at,
+        $id);
+       
+
+    $query->execute();
+
+    if (!($query->affected_rows > 0)) {
+        return [
+            ['message' => 'Data not updated successfully'],
+            ["status" => "400"]
+        ];
+    }
+
+    return [
+        ['message' => 'Data has been updated successfully'],
+        ["status" => "200"]
+    ];
+}
     public function updateCategory($input)
     {
         if (!$this->checkToken($this-> getBearerToken())) {

@@ -5,10 +5,27 @@ header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
-require('./Controller/UserController.php');
-$input = json_decode(file_get_contents("php://input"), true);
-$process= $input['process'];
+header("Content-Type: multipart/form-data");
 
+require('./Controller/UserController.php');
+$contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+        //  var_dump( $contentType);
+if (strpos($contentType, "application/json") !== false) {
+    $input = json_decode(file_get_contents("php://input"), true);
+      // var_dump( $input);
+   
+     
+} elseif (strpos($contentType, "multipart/form-data") !== false) {
+    $input = isset($_POST['data']) 
+        ? json_decode($_POST['data'], true) 
+        : $_POST;
+    $file = $_FILES['image'] ?? null;
+    //  var_dump( $file);
+    //  die;
+}
+
+$process= $input['process'];
+    
 $controller = new Controller();
 switch ($process) {
   case 'getAllCategory':
@@ -108,7 +125,7 @@ switch ($process) {
     echo $response;
     break;
   case 'addProduct':
-    $response = $controller->simplifyLogic($input);
+    $response = $controller->simplifyLogic($input,$file);
     echo $response;
     break;
   case 'updateCategory':
@@ -116,7 +133,7 @@ switch ($process) {
     echo $response;
     break;
       case 'updateProduct':
-    $response = $controller->simplifyLogic($input);
+    $response = $controller->simplifyLogic($input,$file=null);
     echo $response;
     break;
 }
