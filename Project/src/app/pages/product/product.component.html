@@ -264,8 +264,26 @@
 </div>
 
           </div>
+<!-- 
+OldPirce -->
 
+ <div class="mb-3">
 
+            <label class="form-label small fw-bold text-muted">
+              Old PRICE
+            </label>
+
+            <input type="number"
+                   class="form-control form-control-theme"
+                   formControlName="oldPrice"
+                   placeholder="Enter price">
+                     <div class="error-message" 
+     *ngIf="productForm.get('oldPrice')?.touched  &&  productForm.get('oldPrice')?.invalid
+          && productForm.get('oldPrice')?.hasError('required')">
+ oldPrice is required.
+</div>
+
+          </div>
           <!-- QUANTITY -->
 
           <div class="mb-3">

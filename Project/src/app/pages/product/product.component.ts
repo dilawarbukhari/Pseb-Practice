@@ -41,6 +41,7 @@ SetValidation(){
   category_id: ['', Validators.required],
   image: ['', Validators.required],
   price: ['', Validators.required],
+  oldPrice: ['',Validators.required],
   quantity: ['', Validators.required],
   description:['', Validators.required]
 });
@@ -59,6 +60,7 @@ addProduct(){
 formdata.append('product_name', this.productForm.get('product_name')?.value);
 formdata.append('category_id', this.productForm.get('category_id')?.value);
 formdata.append('price', this.productForm.get('price')?.value);
+formdata.append('oldPrice', this.productForm.get('oldPrice')?.value);
 formdata.append('quantity', this.productForm.get('quantity')?.value);
 formdata.append('image', this.productForm.get('image')?.value);
 formdata.append('description', this.productForm.get('description')?.value);
@@ -166,12 +168,15 @@ deleteProduct(response:any){
   })
   }
   updatedetails(response:any){ 
+    debugger
     this.isEdit=false;
         this.imagePreview = response.image;
         this.productForm.patchValue({
           product_name: response.product_name,
           category_id: response.category_id,
           price: response.price,
+          oldPrice: response.oldPrice,
+          description:response.description,
           quantity: response.quantity
         });
         this.product_Id= response.product_Id;
@@ -181,6 +186,7 @@ deleteProduct(response:any){
 formdata.append('product_name', this.productForm.get('product_name')?.value);
 formdata.append('category_id', this.productForm.get('category_id')?.value);
 formdata.append('price', this.productForm.get('price')?.value);
+formdata.append('oldPrice', this.productForm.get('oldPrice')?.value);
 formdata.append('quantity', this.productForm.get('quantity')?.value);
 formdata.append('image', this.productForm.get('image')?.value);
 formdata.append('description', this.productForm.get('description')?.value);
