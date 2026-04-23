@@ -47,10 +47,12 @@
       <thead>
         <tr>
           <th>Sr. No</th>
+          <th>Image</th>
           <th>Product Name</th>
           <th>Category</th>
           <th>Price</th>
           <th>Quantity</th>
+          <th>Description</th>
           <th class="text-end">Actions</th>
         </tr>
       </thead>
@@ -60,7 +62,12 @@
         <tr *ngFor="let item of productResponseList; let i=index">
 
           <td>{{i+1}}</td>
-
+ <td class="img fluid">
+          <img 
+            [src]="item.image"
+              alt="{{item.image}}"        
+            class="product-img ">
+        </td>
           <td class="fw-semibold">
             {{item.product_name}}
           </td>
@@ -76,7 +83,9 @@
           <td>
             {{item.quantity}}
           </td>
-
+  <td>
+            {{item.description}}
+          </td>
           <td class="text-end">
 
             <button class="btn btn-sm btn-edit me-2"
@@ -144,6 +153,67 @@
 
           </div>
 
+<!--  Image-->
+<div class="mb-3" *ngIf="isEdit==false">
+
+  <label class="form-label small fw-bold text-muted">
+    PRODUCT IMAGE
+  </label>
+
+  <!-- IMAGE PREVIEW -->
+  <div class="mb-2 position-relative">
+
+    <img 
+      [src]="imagePreview || 'assets/no-image.png'"
+
+      class="preview-img">
+
+    <!-- CHANGE BUTTON (overlay) -->
+    <button type="button"
+            class="btn btn-sm btn-dark change-btn"
+            (click)="fileInput.click()">
+      Change
+    </button>
+
+  </div>
+
+  <!-- HIDDEN FILE INPUT -->
+  <input type="file"
+         #fileInput
+         formControlName="image"
+         class="d-none"
+         (change)="onFileSelected($event)"
+         accept="image/*">
+
+         </div>
+
+<div *ngIf="isEdit" class="d-flex align-items-center gap-2">
+  
+  <!-- Upload Button -->
+  <button type="button"
+          class="btn btn-primary"
+          (click)="fileInput.click()"
+          [disabled]="isUploading">
+    Upload Picture
+  </button>
+
+  <!-- Loader -->
+  <span *ngIf="isUploading" class="spinner-border spinner-border-sm"></span>
+
+  <!-- File Name -->
+  <span *ngIf="fileName && !isUploading" class="text-success">
+    {{ fileName }}
+  </span>
+
+</div>
+
+<!-- Hidden File Input -->
+<input type="file"
+       #fileInput
+       hidden
+       formControlName="image"
+       (change)="onFileSelected($event)">
+
 
           <!-- CATEGORY -->
 
@@ -194,8 +264,26 @@
 </div>
 
           </div>
+<!-- 
+OldPirce -->
 
+ <div class="mb-3">
 
+            <label class="form-label small fw-bold text-muted">
+              Old PRICE
+            </label>
+
+            <input type="number"
+                   class="form-control form-control-theme"
+                   formControlName="oldPrice"
+                   placeholder="Enter price">
+                     <div class="error-message" 
+     *ngIf="productForm.get('oldPrice')?.touched  &&  productForm.get('oldPrice')?.invalid
+          && productForm.get('oldPrice')?.hasError('required')">
+ oldPrice is required.
+</div>
+
+          </div>
           <!-- QUANTITY -->
 
           <div class="mb-3">
@@ -215,7 +303,25 @@
  quantity is required.
 </div>
           </div>
+<!-- Description-->
+  <div class="mb-3">
 
+            <label class="form-label small fw-bold text-muted">
+            Description
+            </label>
+
+            <input type="text"
+                   class="form-control form-control-theme"
+                   formControlName="description"
+                   placeholder="Enter Description">
+                     <div class="error-message" 
+     *ngIf="productForm.get('description')?.touched  &&  productForm.get('description')?.invalid
+          && productForm.get('description')?.hasError('required')">
+ Description is required.
+</div>
+
+          </div>
+<!-- -->
 
           <div class="row g-2 mt-3">
 
