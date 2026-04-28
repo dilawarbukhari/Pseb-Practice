@@ -58,7 +58,7 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" *ngIf=" role === 'Seller'"  routerLinkActive="active" routerLink="/pages/product">
+      <a class="nav-link" *ngIf=" role === 'Seller' || role === 'Super Admin' || role === 'Admin'"  routerLinkActive="active" routerLink="/pages/product">
         <i class="bi bi-boxes nav-icon"></i>
         <span class="nav-text">Product Management</span>
         <div class="nav-glow"></div>
@@ -72,7 +72,7 @@
       </a>
     </li>
      <li class="nav-item">
-      <a class="nav-link" *ngIf="role === 'Seller'" routerLinkActive="active" routerLink="/pages/ordermanagement">
+      <a class="nav-link" *ngIf="role === 'Seller' || role === 'Super Admin' || role === 'Admin'" routerLinkActive="active" routerLink="/pages/ordermanagement">
         <i class="bi bi-receipt nav-icon"></i>
         <span class="nav-text">Order Management</span>
         <div class="nav-glow"></div>

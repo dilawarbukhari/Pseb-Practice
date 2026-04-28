@@ -75,7 +75,7 @@
           </svg>
         </div>
         <div class="stat-card-content">
-          <p class="stat-value">${{ totalRevenue }}</p>
+          <p class="stat-value">Rs.{{ totalRevenue |  number:'1.0-0'  }}</p>
           <p class="stat-change" [class.positive]="revenueGrowth > 0">
             <span>+{{ revenueGrowth }}%</span> from last month
           </p>

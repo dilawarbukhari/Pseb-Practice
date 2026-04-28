@@ -11,6 +11,10 @@ export class DashboardService {
   constructor(private _http : HttpClient) { 
   }
 
+getTotalRevenue():Observable<any>{
+ const process = 'getTotalRevenue';
+ return this._http.post<any>(this.Url,{process});
+ }
    getRecentOrder():Observable<any>{
  const process = 'getRecentOrder';
  return this._http.post<any>(this.Url,{process});
