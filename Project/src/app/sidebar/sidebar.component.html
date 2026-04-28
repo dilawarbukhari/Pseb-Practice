@@ -1,59 +1,112 @@
 <nav class="sidebar d-flex flex-column">
-  <div class="sidebar-brand px-3 py-3">
-    <span class="brand-badge">IMS</span>
-    <span class="ms-2">Inventory Management </span>
+  <!-- Animated Background Elements -->
+  <div class="sidebar-decoration">
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+  </div>
 
+  <div class="sidebar-brand px-3 py-3">
+    <span class="brand-badge">
+      <span class="badge-glow"></span>
+      IMS
+    </span>
+    <span class="ms-2 brand-text">Inventory Management</span>
   </div>
 
   <ul class="nav nav-pills flex-column px-2">
     <li class="nav-item">
-      <a class="nav-link " routerLinkActive="active" routerLink="/pages/dashboard">Dashboard</a>
-    </li>
-      <li class="nav-item">
-      <a class="nav-link" routerLinkActive="active" *ngIf="role == 'Super Admin' || role == ' Admin'"  routerLink="/pages/user">User Management
+      <a class="nav-link"  *ngIf="role == 'Super Admin' || role == 'Admin'" routerLinkActive="active" routerLink="/pages/dashboard">
+        <i class="bi bi-speedometer2 nav-icon"></i>
+        <span class="nav-text">Dashboard</span>
+        <div class="nav-glow"></div>
       </a>
     </li>
-     <li class="nav-item" >
-      <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Admin' || role === 'Super Admin'"  routerLink="/pages/rolepermission">Roles & Permissions
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" *ngIf="role == 'Super Admin' || role == 'Admin'" routerLink="/pages/user">
+        <i class="bi bi-people nav-icon"></i>
+        <span class="nav-text">User Management</span>
+        <div class="nav-glow"></div>
       </a>
     </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="role === 'Admin' || role === 'Super Admin'"   routerLink="/pages/permission">Manage Permissions</a>
-      </li>
-        <li class="nav-item">
-      <a class="nav-link" (click)="navigate()">Categories</a>
-    </li>
-      <li class="nav-item">
-      <a class="nav-link" routerLink="/pages/userproduct" >User Product</a>
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Admin' || role === 'Super Admin'" routerLink="/pages/rolepermission">
+        <i class="bi bi-shield-check nav-icon"></i>
+        <span class="nav-text">Roles & Permissions</span>
+        <div class="nav-glow"></div>
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" routerLink="/pages/product">Product Management</a>
+      <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Admin' || role === 'Super Admin'" routerLink="/pages/permission">
+        <i class="bi bi-key nav-icon"></i>
+        <span class="nav-text">Manage Permissions</span>
+        <div class="nav-glow"></div>
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  routerLink="/pages/settings">Settings</a>
+      <a class="nav-link"   *ngIf="role === 'Admin' || role === 'Super Admin'" routerLinkActive="active" (click)="navigate()">
+        <i class="bi bi-tags nav-icon"></i>
+        <span class="nav-text">Categories</span>
+        <div class="nav-glow"></div>
+      </a>
     </li>
-
+    <li class="nav-item">
+      <a class="nav-link"  *ngIf="role === 'Buyer'" routerLinkActive="active" routerLink="/pages/userproduct">
+        <i class="bi bi-box-seam nav-icon"></i>
+        <span class="nav-text">User Product</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" *ngIf=" role === 'Seller'"  routerLinkActive="active" routerLink="/pages/product">
+        <i class="bi bi-boxes nav-icon"></i>
+        <span class="nav-text">Product Management</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  *ngIf="role === 'Buyer'" routerLinkActive="active" routerLink="/pages/myorders">
+        <i class="bi bi-receipt nav-icon"></i>
+        <span class="nav-text">My Orders</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+     <li class="nav-item">
+      <a class="nav-link" *ngIf="role === 'Seller'" routerLinkActive="active" routerLink="/pages/ordermanagement">
+        <i class="bi bi-receipt nav-icon"></i>
+        <span class="nav-text">Order Management</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  routerLinkActive="active" routerLink="/pages/settings">
+        <i class="bi bi-gear nav-icon"></i>
+        <span class="nav-text">Settings</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
   </ul>
 
- <div class="sidebar-footer mt-auto px-3 py-3 border-top">
-  <div class="d-flex align-items-center justify-content-between">
-
-    <!-- User Info -->
-    <div class="d-flex align-items-center">
-      <div class="avatar me-2">DB</div>
-      <div>
-        <div class="fw-semibold">Dilawar Bukhari</div>
-        <small class="text-muted">Admin</small>
+  <div class="sidebar-footer mt-auto px-3 py-3 border-top">
+    <div class="d-flex align-items-center justify-content-between">
+      <!-- User Info -->
+      <div class="d-flex align-items-center user-info">
+        <div class="avatar">
+          <span class="avatar-text">DB</span>
+          <div class="avatar-glow"></div>
+        </div>
+        <div class="user-details">
+          <div class="fw-semibold user-name">Dilawar Bukhari</div>
+          <small class="text-muted user-role">Enterprise</small>
+        </div>
       </div>
+
+      <!-- Logout Button -->
+      <button class="btn btn-outline-danger logout-btn d-flex align-items-center gap-1"
+              (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span class="btn-text">Logout</span>
+      </button>
     </div>
-
-    <!-- Logout Button -->
-    <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-            (click)="logout()">
-      <i class="bi bi-box-arrow-right"></i>
-      Logout
-    </button>
-
   </div>
-</div>
 </nav>

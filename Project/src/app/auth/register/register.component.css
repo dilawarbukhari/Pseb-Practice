@@ -150,6 +150,39 @@ button:hover:not(:disabled) {
   font-size: 12px;
   margin-top: 4px;
 }
+
+/* Textarea styling */
+.form-group.floating textarea {
+  width: 100%;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  background: #fff;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group.floating textarea::placeholder {
+  color: transparent;
+}
+
+.form-group.floating textarea:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 6px rgba(106, 17, 203, 0.4);
+}
+
+.form-group.floating textarea:focus + label,
+.form-group.floating textarea:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 12px;
+  font-size: 12px;
+  color: #6a11cb;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {

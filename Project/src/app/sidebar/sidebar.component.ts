@@ -36,8 +36,8 @@ getUserDetails(){
   const userId = this.commonService.getUserId();
  this.userService.getUser(userId!).subscribe({
   next:(response:any)=>{
-    debugger
    this.userResponseList=response[0];
+   debugger
    this.role=this.userResponseList[0].role_name.trim();
   },
   error:(error:any)=>{

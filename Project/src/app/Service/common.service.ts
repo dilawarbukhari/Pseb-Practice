@@ -14,7 +14,6 @@ export class CommonService {
 
 
   getUserId(): number | null {
-    debugger
     const getToken= this.getToken();
     if(!getToken){
       return null;

@@ -3,28 +3,62 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../Service/product.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { UserProductService } from '../../Service/userproduct.service';
+import { CategoryService } from '../../Service/category.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 @Component({
   selector: 'app-userproduct',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule
+    
+  ],
   templateUrl: './userproduct.component.html',
   styleUrl: './userproduct.component.css'
 })
 export class UserproductComponent implements OnInit {
+   shippingForm!  :FormGroup;
   productResponseList : any = [];
   searchResponseList: any = [];
+  filteredProductList: any = [];
+ 
   cartList:any=[];
   cartitem:number=1;
+  categoryResponseList:any = [];
+  searchText: string = '';
+  selectedCategory: string = '';
 
   selectedProduct: any = null;
 cartCount: number = 0;
-  constructor(private _productService :ProductService, private _toasterService : ToastrService, private _route:Router) { }
+  constructor(private _Fb:FormBuilder,private _productService :ProductService,private _userProduct: UserProductService, private _toasterService : ToastrService, private _route:Router,private _categoryService :CategoryService) { }
 
 
 ngOnInit(): void {
   this.getAllProduct();
+  this.SetValidation();
+  this.getAllCategories();
     const count = localStorage.getItem('cartCount');
   this.cartCount = count ? JSON.parse(count) : 0;
  this.getcart();
+ 
+}
+
+SetValidation(){
+this.shippingForm = this._Fb.group({
+shippingAddress: ['',Validators.required],
+shippingCity: ['',Validators.required],
+shippingPostalCode: ['',Validators.required],
+shippingPhone: ['',Validators.required]
+})
+}
+getAllCategories(){
+this._categoryService.getCategories().subscribe({
+  next:(response:any)=>{
+    debugger
+      this.categoryResponseList =response[0];    
+  },
+  error:(error)=>{
+if(error.error?.response){
+        this._toasterService.error(error.error.response, 'Error');
+  } } })
 }
 getAllProduct(){
 this._productService.getProduct().subscribe({
@@ -32,6 +66,7 @@ this._productService.getProduct().subscribe({
       debugger
       this.productResponseList =response[0];
       this.searchResponseList=response[0];
+      this.filteredProductList=response[0];
   },
   error:(error)=>{
 if(error.error?.response){
@@ -179,7 +214,45 @@ getTaxAmount() {
   const subtotal = this.getTotalPrice();
   return Math.round(subtotal * 0.05); // 5% tax
 }
-
+orderPlace(){
+  if (this.shippingForm.invalid) {
+    this.shippingForm.markAllAsTouched();
+    return;
+  }
+  const ShippingDetails = this.shippingForm.value;
+  const items = this.getCheckedItems();
+  const totalAmount = this.getCheckedTotal();
+  const order={
+    items: items,
+    totalAmount: totalAmount,
+    ShippingDetails: ShippingDetails
+  };
+  
+  if (items.length === 0) {
+    this._toasterService.warning('Please select at least one item to place an order.', 'No Items Selected');
+    return;
+  }
+  this._userProduct.orderPlace(order).subscribe({
+    next:(response:any)=>{
+      debugger
+     if(response[1].status !== 200){
+     this._toasterService.error(response[0].message, 'Warning');
+      }
+      this._toasterService.success(response[0].message, 'Success');
+      this.shippingForm.reset();
+      this.cartList = this.cartList.filter((item: any) => !item.checked);
+      localStorage.setItem('cart', JSON.stringify(this.cartList));
+      this.cartCount = this.cartList.reduce((total: number, item: any) => total + (item.cartitem || 0), 0);
+      localStorage.setItem('cartCount', JSON.stringify(this.cartCount));
+        
+},
+error:(error)=>{
+  if (error.error?.response) {
+        this._toasterService.error(error.error.response, 'Order Failed');
+  }
+}
+  })
+}
 
 removeItem(item: any) {
   const index = this.cartList.findIndex((cartItem: any) => cartItem.product_Id === item.product_Id);
@@ -196,5 +269,28 @@ clearCart() {
   this.cartCount = 0;
   localStorage.removeItem('cart');
   localStorage.removeItem('cartCount');
+}
+
+searchProducts(event: any) {
+  this.searchText = event.target.value.toLowerCase();
+  this.applyFilters();
+}
+
+filterByCategory(event: any) {
+  debugger
+  this.selectedCategory = event.target.value;
+  this.applyFilters();
+}
+
+applyFilters() {
+  debugger
+  this.filteredProductList = this.productResponseList.filter((product: any) => {
+    debugger
+    const matchesSearch = product.product_name.toLowerCase().includes(this.searchText) ||
+                          product.description.toLowerCase().includes(this.searchText);
+                          debugger
+    const matchesCategory = !this.selectedCategory || product.category_id == this.selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 }
 }

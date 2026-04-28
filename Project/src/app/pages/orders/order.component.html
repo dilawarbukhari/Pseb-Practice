@@ -1,0 +1,63 @@
+<div class="container my-orders-page py-5">
+  <div class="mb-5">
+    <h1 class="section-title mb-2">My Orders</h1>
+    <p class="section-copy text-muted">Order history and details</p>
+  </div>
+
+  <div class="row gy-3">
+    <div class="col-12">
+      <ng-container *ngIf="orderResponseList?.length > 0; else noOrders">
+        <div class="order-item-card card border-0 rounded-3 p-4 mb-3 shadow-sm" *ngFor="let item of orderResponseList">
+          <div class="row align-items-center gy-3 gx-4">
+            <!-- Image -->
+            <div class="col-12 col-sm-auto">
+              <div class="item-image overflow-hidden rounded-2">
+                <img [src]="item?.Image || 'https://via.placeholder.com/120'" 
+                     [alt]="item?.product_name"
+                     class="img-fluid">
+              </div>
+            </div>
+
+            <!-- Details -->
+            <div class="col">
+              <div class="mb-3">
+                <span class="badge bg-info text-white me-2">{{ item?.Category_name }}</span>
+                <span class="badge bg-light text-dark">Order #{{ item?.order_number }}</span>
+              </div>
+              <h5 class="product-name mb-2">{{ item?.product_name }}</h5>
+              <p class="product-desc text-muted mb-3">{{ item?.description }}</p>
+
+              <div class="row g-3">
+                <div class="col-auto">
+                  <span class="detail-label d-block">Quantity</span>
+                  <p class="detail-value">{{ item?.quantity }}</p>
+                </div>
+                <div class="col-auto">
+                  <span class="detail-label d-block">Unit Price</span>
+                  <p class="detail-value">Rs.{{ item?.price }}</p>
+                </div>
+                <div class="col-auto">
+                  <span class="detail-label d-block">Status</span>
+                  <p class="detail-value">{{ item?.status_Name }}</p>
+                </div>
+                <div class="col-auto ms-auto">
+                  <span class="detail-label d-block text-end">Subtotal</span>
+                  <p class="total-price">Rs.{{ item?.price * item?.quantity }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noOrders>
+        <div class="alert alert-info text-center py-5" role="alert">
+          <h5 class="mb-2">No orders found</h5>
+          <p class="text-muted mb-0">You haven't placed any orders yet.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../Service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -13,14 +13,41 @@ import { ToastrService } from 'ngx-toastr';
     providers:[ToastrService]
 })
 export class RegisterComponent implements OnInit {
-registerForm! : FormGroup
+registerForm! : FormGroup;
+sellerDetailsForm! : FormGroup;
+userRole: string = 'buyer';
+currentStep: number = 1;
 
-public constructor(private _fb: FormBuilder,private _authService: AuthService, private _toastr: ToastrService,private _route : Router){
+public constructor(private _fb: FormBuilder,private _authService: AuthService, private _toastr: ToastrService,private _route : Router, private _activatedRoute: ActivatedRoute){
 
 }
 ngOnInit(){
 this.setValidation();
+this.SellerDetailsForm();
+this.getUserRole();
 }
+
+getUserRole(){
+  this._activatedRoute.queryParams.subscribe(params => {
+    this.userRole = params['role'] || 'buyer';
+    if(this.userRole === 'seller'){
+      this.currentStep = 1;
+    } else {
+      this.currentStep = 2;
+    }
+  });
+}
+
+SellerDetailsForm(){
+  this.sellerDetailsForm = this._fb.group({
+    businessName: ['', [Validators.required]],
+    cnic: ['', [Validators.required]],
+    bankAccount: ['', [Validators.required]],
+    shopAddress: ['', [Validators.required]],
+    taxId: ['', [Validators.required]]
+  });
+}
+
 setValidation(){
   this.registerForm= this._fb.group({
   firstname : (['',Validators.required]),
@@ -31,6 +58,16 @@ setValidation(){
 }, { validators: this.passwordMatchValidator});
   
 }
+
+submitSellerDetails(){
+  if(this.sellerDetailsForm.valid){
+    // localStorage.setItem('sellerDetails', JSON.stringify(this.sellerDetailsForm.value));
+    this.currentStep = 2;
+  } else {
+    this._toastr.error('Please fill in all required fields', 'Validation Error');
+  }
+}
+
 passwordMatchValidator(form: FormGroup) {
   const password = form.get('password');
   const confirm = form.get('confirmPassword');
@@ -45,13 +82,30 @@ passwordMatchValidator(form: FormGroup) {
   }
   return null; 
 }
-  onRegister(){
-    if(this.registerForm.valid){
-      this._authService.register(this.registerForm.value).subscribe({
+
+onRegister(){
+  debugger
+  if(this.registerForm.valid){
+    let registrationData: any = this.registerForm.value;
+    
+    if(this.userRole === 'seller'){
+      const sellerDetails = this.sellerDetailsForm.value;
+      if(sellerDetails){
+        registrationData = {
+          ...registrationData,
+          ...sellerDetails,
+          role: 4
+        };
+      }
+    } else {
+      registrationData.role = 3;
+    }
+    debugger
+    this._authService.register(registrationData).subscribe({
       next:(response:any) => {
         debugger
         if(response[1].status == "200"){
-           this._toastr.success(response[0].message, 'success');
+           this._toastr.success(response[0].message, 'success'); 
       this._route.navigateByUrl("/login");
       }
       this._toastr.error(response[0].message, 'Warning');

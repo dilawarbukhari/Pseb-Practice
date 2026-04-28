@@ -2,10 +2,105 @@
   <div class="login-card">
     <div class="login-header">
       <h2>Create Account</h2>
-      <p>Register to get started</p>
+      <p *ngIf="currentStep === 1 && userRole === 'seller'">Step 1: Business Details</p>
+      <p *ngIf="currentStep === 2">{{ userRole === 'seller' ? 'Step 2: Personal Details' : 'Register to get started' }}</p>
     </div>
 
-    <form [formGroup]="registerForm" >
+    <!-- Step 1: Seller Details Form -->
+    <form *ngIf="currentStep === 1 && userRole === 'seller'" [formGroup]="sellerDetailsForm" (ngSubmit)="submitSellerDetails()">
+      
+      <div class="form-group floating">
+        <input 
+          type="text" 
+          id="businessName" 
+          formControlName="businessName"
+          placeholder=" "
+          required
+        />
+        <label for="businessName">Business Name</label>
+        <div class="error-message" 
+             *ngIf="sellerDetailsForm.get('businessName')?.invalid && 
+                    (sellerDetailsForm.get('businessName')?.dirty || sellerDetailsForm.get('businessName')?.touched)">
+          Business name is required
+        </div>
+      </div>
+
+      <div class="form-group floating">
+        <input 
+          type="text" 
+          id="cnic" 
+          formControlName="cnic"
+          placeholder=" "
+          required
+        />
+        <label for="cnic">CNIC</label>
+        <div class="error-message" 
+             *ngIf="sellerDetailsForm.get('cnic')?.invalid && 
+                    (sellerDetailsForm.get('cnic')?.dirty || sellerDetailsForm.get('cnic')?.touched)">
+          CNIC is required
+        </div>
+      </div>
+
+      <div class="form-group floating">
+        <input 
+          type="text" 
+          id="bankAccount" 
+          formControlName="bankAccount"
+          placeholder=" "
+          required
+        />
+        <label for="bankAccount">Bank Account</label>
+        <div class="error-message" 
+             *ngIf="sellerDetailsForm.get('bankAccount')?.invalid && 
+                    (sellerDetailsForm.get('bankAccount')?.dirty || sellerDetailsForm.get('bankAccount')?.touched)">
+          Bank account is required
+        </div>
+      </div>
+
+      <div class="form-group floating">
+        <textarea 
+          id="shopAddress" 
+          formControlName="shopAddress"
+          placeholder=" "
+          rows="3"
+          required
+        ></textarea>
+        <label for="shopAddress">Shop Address</label>
+        <div class="error-message" 
+             *ngIf="sellerDetailsForm.get('shopAddress')?.invalid && 
+                    (sellerDetailsForm.get('shopAddress')?.dirty || sellerDetailsForm.get('shopAddress')?.touched)">
+          Shop address is required
+        </div>
+      </div>
+
+      <div class="form-group floating">
+        <input 
+          type="text" 
+          id="taxId" 
+          formControlName="taxId"
+          placeholder=" "
+          required
+        />
+        <label for="taxId">Tax ID</label>
+        <div class="error-message" 
+             *ngIf="sellerDetailsForm.get('taxId')?.invalid && 
+                    (sellerDetailsForm.get('taxId')?.dirty || sellerDetailsForm.get('taxId')?.touched)">
+          Tax ID is required
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="sellerDetailsForm.invalid">
+        Next
+      </button>
+
+      <p class="signup-link">
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
+    </form>
+
+    <!-- Step 2: Registration Form -->
+    <form *ngIf="currentStep === 2" [formGroup]="registerForm">
 
       <!-- First Name -->
       <div class="form-group floating">
@@ -108,13 +203,7 @@
   </div>
       </div>
 
-      <!-- Remember Me
-      <div class="form-group remember">
-        <input type="checkbox" id="remember" />
-        <label for="remember">Remember me</label>
-      </div> -->
-
-      <button type="submit"  (click)="onRegister()">
+      <button type="submit" (click)="onRegister()">
         Register
       </button>
 
