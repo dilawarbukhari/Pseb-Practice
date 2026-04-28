@@ -7,6 +7,10 @@ public function checkCondition($input){
     // die;
     $process=$input['process'];
     switch($process){
+        case 'getTotalRevenue':
+            $data=$this->getTotalRevenue();
+            return json_encode($data);
+            break;
         case 'getRecentOrder':
             $data=$this->getRecentOrder();
             return json_encode($data);

@@ -29,6 +29,10 @@ $process= $input['process'];
 $controller = new Controller();
 $client = new clientController();
 switch ($process) {
+  case 'getTotalRevenue':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
   case 'getRecentOrder':
     $response = $client->checkCondition($input);
     echo $response;

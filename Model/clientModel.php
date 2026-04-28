@@ -261,6 +261,20 @@ if ($result->num_rows > 0) {
     return ['message' => 'Failed to fetch total category', 'status' => 400];
 }
 }
+public function getTotalRevenue(){
+    $sql= "SELECT SUM(total_amount) AS total_revenue
+FROM orders
+WHERE IsDeleted = false;";
+    $query = $this->conn->prepare($sql);
+    $query->execute();
+    $result = $query->get_result();
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
+        return ['data' => $data, 'status' => 200];
+    } else {
+        return ['message' => 'Failed to fetch total revenue', 'status' => 400];
+    }
+}
 public function getActiveUsers(){
 $sql= "SELECT COUNT(*) as active_users
 FROM signup 
