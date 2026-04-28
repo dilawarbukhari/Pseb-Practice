@@ -3,7 +3,7 @@ require './Model/Model.php';
 
 class Controller extends Model
 {
-    public function simplifyLogic($input){
+    public function simplifyLogic(array $input, $file = null){
       $process= $input['process'];
       switch ($process){
          case 'registerUser':
@@ -103,7 +103,7 @@ class Controller extends Model
           return json_encode($data);
           break;
           case 'addProduct':
-          $data = $this->addProduct($input);
+          $data = $this->addProduct($input,$file);
           return json_encode($data);
           break;
          case 'updateCategory':

@@ -5,14 +5,93 @@ header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
-require('./Controller/UserController.php');
-$input = json_decode(file_get_contents("php://input"), true);
-$process= $input['process'];
+header("Content-Type: multipart/form-data");
 
+require('./Controller/UserController.php');
+require('./Controller/clientController.php');
+$contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+        //  var_dump( $contentType);
+if (strpos($contentType, "application/json") !== false) {
+    $input = json_decode(file_get_contents("php://input"), true);
+   
+     
+} elseif (strpos($contentType, "multipart/form-data") !== false) {
+    $input = isset($_POST['data']) 
+        ? json_decode($_POST['data'], true) 
+        : $_POST;
+    $file = $_FILES['image'] ?? null;
+    //  var_dump( $file);
+    //  die;
+}
+
+$process= $input['process'];
+    
 $controller = new Controller();
+$client = new clientController();
 switch ($process) {
+  case 'getRecentOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getThisMonth':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getActiveUsers':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getTotalUser':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'getTotalProduct':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'getTotalOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;  
+    case 'getTotalCategory':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+      case 'getPendingOrders':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+         case 'getShippedOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getDeliveredOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
   case 'getAllCategory':
     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'orderPlace':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+
+  case 'getOrderDetail':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'updateOrderStatus':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+     case 'getStatus':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getConfirmOrder':
+    $response = $client->checkCondition($input);
     echo $response;
     break;
     case 'getRolePermission':
@@ -108,7 +187,7 @@ switch ($process) {
     echo $response;
     break;
   case 'addProduct':
-    $response = $controller->simplifyLogic($input);
+    $response = $controller->simplifyLogic($input,$file);
     echo $response;
     break;
   case 'updateCategory':
@@ -116,8 +195,9 @@ switch ($process) {
     echo $response;
     break;
       case 'updateProduct':
-    $response = $controller->simplifyLogic($input);
+    $response = $controller->simplifyLogic($input,$file=null);
     echo $response;
     break;
+
 }
 ?>
