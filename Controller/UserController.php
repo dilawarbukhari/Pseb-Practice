@@ -3,7 +3,7 @@ require './Model/Model.php';
 
 class Controller extends Model
 {
-    public function simplifyLogic($input, $file = null){
+    public function simplifyLogic(array $input, $file = null){
       $process= $input['process'];
       switch ($process){
          case 'registerUser':

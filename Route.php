@@ -8,11 +8,11 @@ header("Content-Type: application/json");
 header("Content-Type: multipart/form-data");
 
 require('./Controller/UserController.php');
+require('./Controller/clientController.php');
 $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
         //  var_dump( $contentType);
 if (strpos($contentType, "application/json") !== false) {
     $input = json_decode(file_get_contents("php://input"), true);
-      // var_dump( $input);
    
      
 } elseif (strpos($contentType, "multipart/form-data") !== false) {
@@ -27,9 +27,71 @@ if (strpos($contentType, "application/json") !== false) {
 $process= $input['process'];
     
 $controller = new Controller();
+$client = new clientController();
 switch ($process) {
+  case 'getRecentOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getThisMonth':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getActiveUsers':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getTotalUser':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'getTotalProduct':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'getTotalOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;  
+    case 'getTotalCategory':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+      case 'getPendingOrders':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+         case 'getShippedOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getDeliveredOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
   case 'getAllCategory':
     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'orderPlace':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+
+  case 'getOrderDetail':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+    case 'updateOrderStatus':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+     case 'getStatus':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getConfirmOrder':
+    $response = $client->checkCondition($input);
     echo $response;
     break;
     case 'getRolePermission':
@@ -136,5 +198,6 @@ switch ($process) {
     $response = $controller->simplifyLogic($input,$file=null);
     echo $response;
     break;
+
 }
 ?>

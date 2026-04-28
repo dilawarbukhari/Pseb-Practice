@@ -327,12 +327,12 @@ class Model extends db
 
        
         $userId = $input['user_Id'];
-     if (!$this->hasPermission($userId, "view_user")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
+    //  if (!$this->hasPermission($userId, "view_user")) {
+    //         return [
+    //             ["message" => "you have no permission to do the process"],
+    //             ["status" => "400"]
+    //         ];
+    //     }
 
         $sql = 'Select s.Id, s.firstname, s.lastname, s.email, s.role_Id,r.role_name from signup s LEFT JOIN role r ON s.role_Id = r.role_Id Where Id = ? AND s.isDeleted != true And r.IsDeleted != true' ;
 
@@ -353,12 +353,12 @@ class Model extends db
             return [['message' => 'Please login again'],  ["status" => "400"]];
         }
         $userId = $this->getUserId($this-> getBearerToken());
-        if (!$this->hasPermission($userId, "view_category")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
+        // if (!$this->hasPermission($userId, "view_category")) {
+        //     return [
+        //         ["message" => "you have no permission to do the process"],
+        //         ["status" => "400"]
+        //     ];
+        // }
         $sql = 'Select * from categories   Where isDeleted !=true';
 
         $query = $this->conn->prepare($sql);
@@ -439,12 +439,12 @@ class Model extends db
             return [['message' => 'Please login again'],  ["status" => "400"]];
         }
         $userId = $this->getUserId($this-> getBearerToken());
-        if (!$this->hasPermission($userId, "view_product")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
+        // if (!$this->hasPermission($userId, "view_product")) {
+        //     return [
+        //         ["message" => "you have no permission to do the process"],
+        //         ["status" => "400"]
+        //     ];
+        // }
         $sql = 'Select p.product_Id ,p.description,P.image, p.product_name,p.category_id,c.category_name,p.price,p.oldPrice,p.quantity  from products p Join categories c On c.category_id = p.category_id   Where p.isDeleted !=true AND c.isDeleted != true;';
 
         $query = $this->conn->prepare($sql);
@@ -873,18 +873,27 @@ public function addProduct($input, $file = null)
                 ['status' => '200']
             ];       
     }
-    public function registerUser($input)
+    public function registerUser(array $input)
     {
+
+    // var_dump($input);
+    // die;
         $firstname = $input['firstname'];
         $lastName = $input['lastname'];
         $email = $input['email'];
         $password = $input['password'];
-        $role_Id = 1;
-        $isChanged=true;
+        $role_Id = $input['role'];
+      $bankAccount  = $input['bankAccount'] ?? ' ';
+      $businessName = $input['businessName'] ?? ' ';
+      $cnic   = (int)($input['cnic'] ?? '');
+      $shopAddress  = $input['shopAddress'] ?? ' ';
+      $taxId = (int)($input['taxId'] ?? '');
+
+
+
+        $isChanged=true;    
         $created_at = date('Y-m-d H:i:s', time());
-        $created_by = !empty($this-> getBearerToken())
-            ? $this->getUserId($this-> getBearerToken())
-            : null;
+        $created_by = $role_Id;
         $checkpassword = $input['confirmPassword'];
         $hashpassowrd = password_hash($password, PASSWORD_DEFAULT);
         if (!empty($firstname && $lastName && $email && $password)) {
@@ -930,7 +939,8 @@ public function addProduct($input, $file = null)
                     ['message' => 'Password must contain special char'],
                     ['status' => '400']
                 ];
-            $sql = "INSERT INTO signup (Firstname,Lastname,Email,Password,role_Id,created_by, created_at,isChanged) VALUES (?,?,?,?,?,?,?,?)";
+                if($role_Id !==4){  
+                    $sql = "INSERT INTO signup (Firstname,Lastname,Email,Password,role_Id,created_by, created_at,isChanged) VALUES (?,?,?,?,?,?,?,?)";
             $query = $this->conn->prepare($sql);
             $query->bind_param("ssssiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $created_by, $created_at, $isChanged);
             $query->execute();
@@ -940,13 +950,47 @@ public function addProduct($input, $file = null)
                     ['status' => '400']
                 ];
             }
-            return [
+              return [
                 ['message' => 'Data has been added successfully'],
                 ['status' => '200']
             ];
+                }
+
+         if (
+    empty($bankAccount) ||
+    empty($businessName) ||
+    empty($cnic) ||
+    empty($shopAddress) ||
+    empty($taxId)
+) {
+    return [
+        'message' => 'All fields are required for supplier registration',
+        'status'  => 400
+    ];
+}
+// var_dump($bankAccount, $businessName, $cnic, $shopAddress, $taxId);
+//  die;
+               $sql  = "INSERT INTO signup (Firstname,Lastname,Email,Password,role_Id,Business_Name,CNIC,Bank_account ,Shop_address,Tax_Id, created_by, created_at,isChanged) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            $query = $this->conn->prepare($sql);
+            $query->bind_param("ssssisissiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $businessName, $cnic, $bankAccount, $shopAddress, $taxId, $created_by, $created_at, $isChanged);
+            $query->execute();
+            if (!$query->affected_rows > 0) {
+                return [
+                    ['message' => 'Data not added successfully'],
+                    ['status' => '400']
+                ];
+            }
+              
+              return [
+                ['message' => 'Data has been added successfully'],
+                ['status' => '200']
+            ];
+            
         }
+    
         return [['message' => 'All Fields are required'], ['status' => '400']];
     }
+    
     public function addUser($input)
     {
         if (!$this->checkToken($this-> getBearerToken())) {
