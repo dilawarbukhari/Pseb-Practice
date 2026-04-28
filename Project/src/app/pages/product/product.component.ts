@@ -49,6 +49,7 @@ SetValidation(){
 addButton(){
   this.isEdit=true;
   this.productForm.reset();
+  this.fileName='';
 }
 addProduct(){
   debugger
@@ -75,6 +76,7 @@ this._productService.addProduct(formdata).subscribe({
       }
       this._toasterService.success(response[0].message, 'Success');
          this.getAllProduct();
+          this.fileName='';
          this.productForm.reset();
   },
   error:(error:any)=>{

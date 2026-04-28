@@ -1,49 +1,37 @@
 <div class="container-fluid p-4 product-page">
 
+  <!-- Header Section -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-
     <h3 class="fw-bold title">
-      <i class="bi bi-box-seam me-2 text-primary"></i>
-      Products
+      <i class="bi bi-box-seam me-2 text-primary"></i>Products
     </h3>
 
     <button class="btn btn-add px-4"
             data-bs-toggle="modal"
             data-bs-target="#productModal"
-            (click)="addButton()">
-
-      <i class="bi bi-plus-circle me-2"></i>
-      Add Product
+            (click)="addButton()"
+            title="Add new product">
+      <i class="bi bi-plus-circle me-2"></i>Add Product
     </button>
-
   </div>
 
-  <!-- SEARCH -->
-
+  <!-- Search Section -->
   <div class="search-box mb-4">
-
     <div class="input-group">
-
       <span class="input-group-text">
         <i class="bi bi-search"></i>
       </span>
-
       <input type="text"
              class="form-control"
              [(ngModel)]="searchText"
              (input)="searchDetails()"
              placeholder="Search product name...">
-
     </div>
-
   </div>
 
-  <!-- TABLE -->
-
+  <!-- Table Section -->
   <div class="table-card">
-
     <table class="table align-middle mb-0">
-
       <thead>
         <tr>
           <th>Sr. No</th>
@@ -58,337 +46,244 @@
       </thead>
 
       <tbody>
-
         <tr *ngFor="let item of productResponseList; let i=index">
-
           <td>{{i+1}}</td>
- <td class="img fluid">
-          <img 
-            [src]="item.image"
-              alt="{{item.image}}"        
-            class="product-img ">
-        </td>
-          <td class="fw-semibold">
-            {{item.product_name}}
+          <td class="img fluid">
+            <img [src]="item.image"
+                 alt="{{item.product_name}}"
+                 class="product-img"
+                 title="Product image">
           </td>
-
+          <td class="fw-semibold">{{item.product_name}}</td>
           <td>
-            {{item.category_name}}
+            <span class="badge bg-light text-dark">{{item.category_name}}</span>
           </td>
-
           <td>
-            {{item.price}}
+            <span class="badge bg-success">₹{{item.price}}</span>
           </td>
-
           <td>
-            {{item.quantity}}
+            <span class="badge bg-info">{{item.quantity}} units</span>
           </td>
-  <td>
-            {{item.description}}
+          <td>
+            <small class="text-muted">{{item.description}}</small>
           </td>
           <td class="text-end">
-
             <button class="btn btn-sm btn-edit me-2"
                     data-bs-toggle="modal"
                     data-bs-target="#productModal"
-                    (click)="updatedetails(item)">
+                    (click)="updatedetails(item)"
+                    title="Edit product">
               <i class="bi bi-pencil"></i>
             </button>
 
             <button class="btn btn-sm btn-delete"
                     data-bs-toggle="modal"
                     data-bs-target="#deleteModal"
-                    (click)="deleteProduct(item)">
+                    (click)="deleteProduct(item)"
+                    title="Delete product">
               <i class="bi bi-trash"></i>
             </button>
-
           </td>
-
         </tr>
-
       </tbody>
-
     </table>
-
   </div>
 
 </div>
-<div class="modal fade" id="productModal">
 
-  <div class="modal-dialog modal-dialog-centered">
-
+<!-- Add/Edit Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content modal-theme">
-
       <div class="modal-header border-0">
-
         <h5 class="fw-bold">
-          {{isEdit ? 'Add Product': 'Update Product' }}
+          <i class="bi me-2" [ngClass]="isEdit ? 'bi-plus-circle' : 'bi-pencil-square'"></i>
+          {{isEdit ? 'Add Product' : 'Update Product'}}
         </h5>
-
         <button class="btn-close" data-bs-dismiss="modal"></button>
-
       </div>
 
       <div class="modal-body">
-
         <form [formGroup]="productForm">
+          <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+              <!-- PRODUCT NAME -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">PRODUCT NAME</label>
+                <input type="text"
+                       class="form-control form-control-theme"
+                       formControlName="product_name"
+                       placeholder="e.g. Laptop">
+                <div class="error-message"
+                     *ngIf="productForm.get('product_name')?.touched && productForm.get('product_name')?.invalid && productForm.get('product_name')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Product name is required.
+                </div>
+              </div>
 
-          <!-- PRODUCT NAME -->
+              <!-- CATEGORY -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">CATEGORY</label>
+                <select class="form-control form-control-theme"
+                        formControlName="category_id">
+                  <option value='' disabled>Select Category</option>
+                  <option *ngFor="let item of categoryResponseList"
+                          [value]="item.category_id">
+                    {{item.category_name}}
+                  </option>
+                </select>
+                <div class="error-message"
+                     *ngIf="productForm.get('category_id')?.touched && productForm.get('category_id')?.invalid && productForm.get('category_id')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Category is required.
+                </div>
+              </div>
 
-          <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-              PRODUCT NAME
-            </label>
-
-            <input type="text"
-                   class="form-control form-control-theme"
-                   formControlName="product_name"
-                   placeholder="e.g. Laptop">
-                    <div class="error-message" 
-     *ngIf="productForm.get('product_name')?.touched  &&  productForm.get('product_name')?.invalid
-          && productForm.get('product_name')?.hasError('required')">
-  Product name is required.
-</div>
-
-          </div>
-
-<!--  Image-->
-<div class="mb-3" *ngIf="isEdit==false">
-
-  <label class="form-label small fw-bold text-muted">
-    PRODUCT IMAGE
-  </label>
-
-  <!-- IMAGE PREVIEW -->
-  <div class="mb-2 position-relative">
-
-    <img 
-      [src]="imagePreview || 'assets/no-image.png'"
-
-      class="preview-img">
-
-    <!-- CHANGE BUTTON (overlay) -->
-    <button type="button"
-            class="btn btn-sm btn-dark change-btn"
-            (click)="fileInput.click()">
-      Change
-    </button>
-
-  </div>
-
-  <!-- HIDDEN FILE INPUT -->
-  <input type="file"
-         #fileInput
-         formControlName="image"
-         class="d-none"
-         (change)="onFileSelected($event)"
-         accept="image/*">
-
-         </div>
-
-<div *ngIf="isEdit" class="d-flex align-items-center gap-2">
-  
-  <!-- Upload Button -->
-  <button type="button"
-          class="btn btn-primary"
-          (click)="fileInput.click()"
-          [disabled]="isUploading">
-    Upload Picture
-  </button>
-
-  <!-- Loader -->
-  <span *ngIf="isUploading" class="spinner-border spinner-border-sm"></span>
-
-  <!-- File Name -->
-  <span *ngIf="fileName && !isUploading" class="text-success">
-    {{ fileName }}
-  </span>
-
-</div>
-
-<!-- Hidden File Input -->
-<input type="file"
-       #fileInput
-       hidden
-       formControlName="image"
-       (change)="onFileSelected($event)">
-
-
-          <!-- CATEGORY -->
-
-          <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-              CATEGORY
-            </label>
-
-            <select class="form-control form-control-theme"
-                    formControlName="category_id" >
-
-              <option value='' disabled>
-    Select Category
-  </option>
-
-              <option *ngFor="let item of categoryResponseList"
-                      [value]="item.category_id">
-                {{item.category_name}}
-              </option>
-      
-            </select>
-<div class="error-message" 
-     *ngIf="productForm.get('category_id')?.touched  &&  productForm.get('category_id')?.invalid
-          && productForm.get('category_id')?.hasError('required')">
- Category is required.
-</div>
-             
-          </div>
-
-
-          <!-- PRICE -->
-
-          <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-              PRICE
-            </label>
-
-            <input type="number"
-                   class="form-control form-control-theme"
-                   formControlName="price"
-                   placeholder="Enter price">
-                     <div class="error-message" 
-     *ngIf="productForm.get('price')?.touched  &&  productForm.get('price')?.invalid
-          && productForm.get('price')?.hasError('required')">
- Price is required.
-</div>
-
-          </div>
-<!-- 
-OldPirce -->
-
- <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-              Old PRICE
-            </label>
-
-            <input type="number"
-                   class="form-control form-control-theme"
-                   formControlName="oldPrice"
-                   placeholder="Enter price">
-                     <div class="error-message" 
-     *ngIf="productForm.get('oldPrice')?.touched  &&  productForm.get('oldPrice')?.invalid
-          && productForm.get('oldPrice')?.hasError('required')">
- oldPrice is required.
-</div>
-
-          </div>
-          <!-- QUANTITY -->
-
-          <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-              QUANTITY
-            </label>
-
-            <input type="number"
-                   class="form-control form-control-theme"
-                   formControlName="quantity"
-                   placeholder="Enter quantity">
-                   
-               <div class="error-message" 
-     *ngIf="productForm.get('quantity')?.touched  &&  productForm.get('quantity')?.invalid
-          && productForm.get('quantity')?.hasError('required')">
- quantity is required.
-</div>
-          </div>
-<!-- Description-->
-  <div class="mb-3">
-
-            <label class="form-label small fw-bold text-muted">
-            Description
-            </label>
-
-            <input type="text"
-                   class="form-control form-control-theme"
-                   formControlName="description"
-                   placeholder="Enter Description">
-                     <div class="error-message" 
-     *ngIf="productForm.get('description')?.touched  &&  productForm.get('description')?.invalid
-          && productForm.get('description')?.hasError('required')">
- Description is required.
-</div>
-
-          </div>
-<!-- -->
-
-          <div class="row g-2 mt-3">
-
-            <div class="col-6">
-
-              <button class="btn btn-light w-100 py-2"
-                      data-bs-dismiss="modal">
-                Cancel
-              </button>
-
+              <!-- PRICE -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">PRICE (₹)</label>
+                <input type="number"
+                       class="form-control form-control-theme"
+                       formControlName="price"
+                       placeholder="Enter price">
+                <div class="error-message"
+                     *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid && productForm.get('price')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Price is required.
+                </div>
+              </div>
             </div>
 
-            <div class="col-6">
+            <!-- Right Column -->
+            <div class="col-md-6">
+              <!-- OLD PRICE -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">OLD PRICE (₹)</label>
+                <input type="number"
+                       class="form-control form-control-theme"
+                       formControlName="oldPrice"
+                       placeholder="Enter old price">
+                <div class="error-message"
+                     *ngIf="productForm.get('oldPrice')?.touched && productForm.get('oldPrice')?.invalid && productForm.get('oldPrice')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Old price is required.
+                </div>
+              </div>
 
+              <!-- QUANTITY -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">QUANTITY</label>
+                <input type="number"
+                       class="form-control form-control-theme"
+                       formControlName="quantity"
+                       placeholder="Enter quantity">
+                <div class="error-message"
+                     *ngIf="productForm.get('quantity')?.touched && productForm.get('quantity')?.invalid && productForm.get('quantity')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Quantity is required.
+                </div>
+              </div>
+
+              <!-- DESCRIPTION -->
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">DESCRIPTION</label>
+                <input type="text"
+                       class="form-control form-control-theme"
+                       formControlName="description"
+                       placeholder="Enter description">
+                <div class="error-message"
+                     *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid && productForm.get('description')?.hasError('required')">
+                  <i class="bi bi-exclamation-circle me-1"></i>Description is required.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- IMAGE SECTION -->
+          <div class="row">
+            <div class="col-12">
+              <hr class="my-3">
+              <label class="form-label small fw-bold text-muted d-block mb-3">
+                <i class="bi bi-image me-2"></i>PRODUCT IMAGE
+              </label>
+
+              <!-- Add Product Image Preview -->
+              <div *ngIf="isEdit===false" class="mb-3">
+                <div class="position-relative mb-3">
+                  <img [src]="imagePreview || 'assets/no-image.png'"
+                       class="preview-img">
+                  <button type="button"
+                          class="btn btn-sm change-btn"
+                          (click)="fileInput.click()">
+                    <i class="bi bi-camera me-1"></i>Change
+                  </button>
+                </div>
+                <input type="file"
+                       #fileInput
+                       formControlName="image"
+                       class="d-none"
+                       (change)="onFileSelected($event)"
+                       accept="image/*">
+              </div>
+
+              <!-- Edit Product Image Upload -->
+              <div *ngIf="isEdit" class="d-flex align-items-center gap-3">
+                <button type="button"
+                        class="btn btn-primary"
+                        (click)="fileInput.click()"
+                        [disabled]="isUploading">
+                  <i class="bi bi-cloud-upload me-2"></i>Upload Picture
+                </button>
+
+                <span *ngIf="isUploading" class="spinner-border spinner-border-sm"></span>
+
+                <span *ngIf="fileName && !isUploading" class="text-success">
+                  <i class="bi bi-check-circle me-1"></i>{{ fileName }}
+                </span>
+
+                <input type="file"
+                       #fileInput
+                       hidden
+                       formControlName="image"
+                       (change)="onFileSelected($event)">
+              </div>
+            </div>
+          </div>
+
+          <!-- BUTTONS -->
+          <div class="row g-2 mt-4">
+            <div class="col-6">
+              <button class="btn btn-light w-100 py-2" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-2"></i>Cancel
+              </button>
+            </div>
+            <div class="col-6">
               <button class="btn btn-theme w-100 py-2"
-                      (click)="isEdit ? addProduct(): updateProduct()">
-
-                {{isEdit ?  'Save':'Update' }}
-
+                      (click)="isEdit ? addProduct() : updateProduct()">
+                <i class="bi bi-check-circle me-2"></i>{{isEdit ? 'Save' : 'Update'}}
               </button>
-
             </div>
-
           </div>
 
         </form>
-
       </div>
-
     </div>
-
   </div>
-
 </div>
+
 <!-- Delete Confirmation Modal -->
-
-<div class="modal fade" id="deleteModal">
-
+<div class="modal fade" id="deleteModal" tabindex="-1">
   <div class="modal-dialog modal-sm modal-dialog-centered">
-
     <div class="modal-content delete-modal text-center p-4">
-
       <div class="text-danger mb-3">
         <i class="bi bi-exclamation-triangle-fill display-4"></i>
       </div>
-
-      <h5 class="fw-bold" >Confirm Delete</h5>
-
-      <p class="text-muted">
-        Kya aap waqai is product ko delete karna chahte hain?
-      </p>
-
+      <h5 class="fw-bold">Confirm Delete</h5>
+      <p class="text-muted">Are you sure you want to delete this product?</p>
       <div class="d-flex gap-2">
-
-        <button class="btn btn-light w-100"
-                data-bs-dismiss="modal">
-          No
+        <button class="btn btn-light w-100" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i>No
         </button>
-
         <button class="btn btn-danger w-100" data-bs-dismiss="modal" (click)="confirmDelete()">
-          Yes, Delete
+          <i class="bi bi-trash me-1"></i>Yes, Delete
         </button>
-
       </div>
-
     </div>
-
   </div>
-
 </div>

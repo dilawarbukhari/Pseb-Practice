@@ -52,12 +52,35 @@
 
       <p class="signup-link">
         Don't have an account?
-        <a routerLink="/register">Sign Up</a>
+        <a (click)="onSignupClick()" style="cursor: pointer;">Sign Up</a>
       </p>
        <p class="signup-link">
         Forget Password
         <a routerLink="/forgotpassword">Reset Password</a>
       </p>
     </form>
+  </div>
+</div>
+
+<!-- Role Selection Modal -->
+<div *ngIf="showRoleSelection" class="modal-overlay" (click)="closeRoleSelection()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Select Account Type</h3>
+      <button class="close-btn" (click)="closeRoleSelection()">&times;</button>
+    </div>
+    <p class="modal-description">Choose how you'd like to join our platform</p>
+    <div class="role-options">
+      <div class="role-card" (click)="selectRole('buyer')">
+        <div class="role-icon">👤</div>
+        <h4>Buyer</h4>
+        <p>Browse and purchase products</p>
+      </div>
+      <div class="role-card" (click)="selectRole('seller')">
+        <div class="role-icon">🏪</div>
+        <h4>Seller</h4>
+        <p>Sell products and manage inventory</p>
+      </div>
+    </div>
   </div>
 </div>

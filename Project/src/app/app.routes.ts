@@ -13,7 +13,9 @@ import { RolepermissionComponent } from './pages/rolepermission/rolepermission.c
 import { PermissionComponent } from './pages/permission/permission.component';
 import { ForgetpasswordComponent } from './auth/forgetpassword/forgetpassword.component';
 import { UserproductComponent } from './pages/userproduct/userproduct.component';
-import { CartComponent } from './pages/cart/cart.component';
+
+import { OrderComponent } from './pages/orders/order.component';
+import { OrdermanagementComponent } from './pages/ordermanagement/ordermanagement.component';
 
 
 export const routes: Routes = [
@@ -34,7 +36,8 @@ export const routes: Routes = [
       { path: 'category', component: CategoryComponent },
       { path: 'product', component: ProductComponent },
       { path: 'userproduct', component: UserproductComponent },
-      { path: 'cart', component: CartComponent },
+      { path: 'myorders', component: OrderComponent },
+       { path: 'ordermanagement', component: OrdermanagementComponent },
       { path: 'settings', component: SettingComponent },
       { path: 'rolepermission', component: RolepermissionComponent },
       { path: 'permission', component: PermissionComponent },

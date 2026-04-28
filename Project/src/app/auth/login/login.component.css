@@ -170,3 +170,151 @@ button:hover:not(:disabled) {
   color: #6a11cb;
 }
 }
+
+/* Role Selection Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: #fff;
+  padding: 40px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-in-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.modal-header h3 {
+  color: #333;
+  font-size: 24px;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #777;
+  cursor: pointer;
+  padding: 0;
+  width: auto;
+  height: auto;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.modal-description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.role-options {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.role-card {
+  flex: 1;
+  min-width: 200px;
+  padding: 30px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
+}
+
+.role-card:hover {
+  border-color: #6a11cb;
+  background: #f5f0ff;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(106, 17, 203, 0.15);
+}
+
+.role-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.role-card h4 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.role-card p {
+  font-size: 14px;
+  color: #777;
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    padding: 30px 20px;
+  }
+
+  .modal-header h3 {
+    font-size: 20px;
+  }
+
+  .role-options {
+    flex-direction: column;
+  }
+
+  .role-card {
+    min-width: 100%;
+  }
+
+  .role-icon {
+    font-size: 50px;
+  }
+}

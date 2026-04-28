@@ -17,11 +17,25 @@ import { ToastrService } from 'ngx-toastr';
 export class LoginComponent implements OnInit {
  loginForm! : FormGroup;
  token = '';
+ showRoleSelection = false;
 
   public constructor(private _fb: FormBuilder,private _authService : AuthService,private _toastr: ToastrService,private _router: Router){
   }
   ngOnInit(){
   this.setValidation();
+  }
+  
+  onSignupClick(){
+    this.showRoleSelection = true;
+  }
+  
+  selectRole(role: string){
+    this.showRoleSelection = false;
+    this._router.navigate(['/register'], { queryParams: { role: role } });
+  }
+  
+  closeRoleSelection(){
+    this.showRoleSelection = false;
   }
 setValidation(){
   this.loginForm = this._fb.group({

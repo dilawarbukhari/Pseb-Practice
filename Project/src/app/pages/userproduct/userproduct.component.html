@@ -1,4 +1,4 @@
-  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient shadow-lg">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient shadow-lg">
     <div class="container-fluid px-4">
 
       <!-- Left side (Logo / Title) -->
@@ -162,9 +162,35 @@
         </div>
       </div>
 
+      <!-- Search and Filter Bar -->
+      <div class="row mb-4 g-3">
+        <div class="col-md-7">
+          <div class="input-group input-group-lg shadow-sm">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-secondary"></i>
+            </span>
+            <input type="text" 
+                   class="form-control border-start-0 ps-0" 
+                   placeholder="Search products by name or description..." 
+                   (keyup)="searchProducts($event)"
+                   style="font-size: 1rem;">
+          </div>
+        </div>
+        <div class="col-md-5">
+          <select class="form-select form-select-lg text-dark" (change)="filterByCategory($event)">
+            <div class="text-dark">
+            <option value="" class="text-dark">All Categories</option>
+            <option *ngFor="let category of categoryResponseList" [value]="category.category_id" class="cat-option" >
+              {{ category.category_name}}
+            </option>
+            </div>
+          </select>
+        </div>
+      </div>
+
       <!-- Products Grid -->
       <div class="row g-4">
-        <div class="col-lg-3 col-md-6 mb-4" *ngFor="let product of productResponseList">
+        <div class="col-lg-3 col-md-6 mb-4" *ngFor="let product of filteredProductList">
           <div class="card h-100 shadow-sm border-0 product-card">
 
             <!-- Image Container -->
@@ -357,6 +383,55 @@
             </ng-template>
           </div>
 
+          <!-- Shipping Details Section -->
+          <div class="shipping-details-section mt-4 p-3 bg-light rounded">
+            <h6 class="fw-bold text-dark mb-3">
+              <i class="bi bi-truck me-2 text-primary"></i>
+              Shipping Details
+            </h6>
+            <form  [formGroup]="shippingForm">
+  
+              <div class="mb-3">
+                <label for="shippingAddress" class="form-label">Address</label>
+                <textarea class="form-control shadow-sm" formControlName="shippingAddress" id="shippingAddress" rows="3" placeholder="Enter your address"></textarea>
+                     <div class="error-message" 
+     *ngIf="shippingForm.get('shippingAddress')?.touched  &&  shippingForm.get('shippingAddress')?.invalid
+          && shippingForm.get('shippingAddress')?.hasError('required')">
+  Address is required.
+</div>
+              </div>
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label for="shippingCity" class="form-label">City</label>
+                  <input type="text" class="form-control shadow-sm" formControlName="shippingCity" id="shippingCity" placeholder="Enter your city">
+                       <div class="error-message" 
+     *ngIf="shippingForm.get('shippingCity')?.touched  &&  shippingForm.get('shippingCity')?.invalid
+          && shippingForm.get('shippingCity')?.hasError('required')">
+  City is required.
+</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="shippingPostalCode" class="form-label">Postal Code</label>
+                  <input type="text" class="form-control shadow-sm" formControlName="shippingPostalCode" id="shippingPostalCode" placeholder="Enter postal code">
+                       <div class="error-message" 
+     *ngIf="shippingForm.get('shippingPostalCode')?.touched  &&  shippingForm.get('shippingPostalCode')?.invalid
+          && shippingForm.get('shippingPostalCode')?.hasError('required')">
+  Postal Code is required.
+</div>
+                </div>
+              </div>
+              <div class="mb-0 mt-3">
+                <label for="shippingPhone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control shadow-sm" formControlName="shippingPhone" id="shippingPhone" placeholder="Enter your phone number">
+                     <div class="error-message" 
+     *ngIf="shippingForm.get('shippingPhone')?.touched  &&  shippingForm.get('shippingPhone')?.invalid
+          && shippingForm.get('shippingPhone')?.hasError('required')">
+  Phone Number is required.
+</div>
+              </div>
+            </form>
+          </div>
+
           <!-- Voucher -->
           <div class="voucher-section mt-3 p-3 bg-light rounded">
             <label for="voucherCode" class="form-label fw-bold">Apply Voucher Code</label>
@@ -377,7 +452,7 @@
               <span class="text-muted">Total Amount:</span>
               <span class="fw-bold fs-5 text-primary ms-2">Rs. {{ getCheckedTotal() }}</span>
             </div>
-            <button class="btn btn-success btn-lg px-4" [disabled]="getCheckedItems().length === 0">
+            <button class="btn btn-success btn-lg px-4" [disabled]="getCheckedItems().length === 0"  (click)="orderPlace()">
               <i class="bi bi-credit-card me-2"></i>
               Proceed to Checkout
             </button>

@@ -150,6 +150,70 @@
   color: #28a745;
 }
 
+/* Search and Filter Bar Styles */
+.input-group {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.input-group .input-group-text {
+  border: 2px solid #e9ecef;
+  background-color: #ffffff;
+  color: #6c757d;
+}
+
+.input-group .form-control {
+  border: 2px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input-group .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-select {
+  border: 2px solid #e9ecef;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  font-size: 1rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-select option {
+  padding: 0.5rem;
+  color: #343a40;
+}
+
+.cat-option{
+  color: #343a40 !important;
+  background-color: #f8f9fa !important;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .input-group .form-control {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .form-select {
+    font-size: 0.95rem;
+    padding: 0.6rem 2.25rem 0.6rem 0.75rem;
+  }
+}
+
+
 .total-calculation {
   background: #f8f9fa;
   padding: 1rem;
@@ -399,7 +463,7 @@
   justify-content: center;
 }
 
-.discount-small {
+_discount-small {
   font-weight: 500;
 }
 
@@ -777,6 +841,12 @@
 .cart-item-card:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 
 .btn-group .btn {
   border-radius: 6px !important;
@@ -827,4 +897,35 @@
   border-radius: 0 0 15px 15px;
   border-top: none;
   padding: 1.5rem;
+}
+
+/* Shipping Details Section */
+.shipping-details-section {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.shipping-details-section h6 {
+  color: #343a40;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.shipping-details-section .form-label {
+  font-weight: bold;
+  color: #495057;
+}
+
+.shipping-details-section .form-control {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.shipping-details-section .form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
 }
