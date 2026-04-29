@@ -5,7 +5,7 @@ import { ProductService } from '../../Service/product.service';
 import { CategoryService } from '../../Service/category.service';
 import { CommonModule } from '@angular/common';
 import { UpdateProductRequest } from '../../Interface/updateProduct';
-import { DeferBlockFixture } from '@angular/core/testing';
+import { CommonService } from '../../Service/common.service';
 
 declare var bootstrap: any;
 
@@ -29,7 +29,7 @@ fileName: string = '';
   updateProductRequest :UpdateProductRequest;
   isEdit : boolean = true;
   product_Id =0;
-  constructor(private _productService: ProductService, private _categoryService:CategoryService   ,private _fb: FormBuilder,private _toasterService:ToastrService){
+  constructor(private _productService: ProductService, private _categoryService:CategoryService   ,private _fb: FormBuilder,private _toasterService:ToastrService,private _commonService:CommonService){
 this.updateProductRequest= new UpdateProductRequest();
   }
   ngOnInit(): void {
@@ -54,9 +54,10 @@ addButton(){
   this.isEdit=true;
   this.productForm.reset();
   this.fileName='';
+  this.SelectedFile = null;
+  this.imagePreview = null;
 }
 addProduct(){
-  debugger
   if(this.productForm.invalid){
    this.productForm.markAllAsTouched();
     return;
@@ -81,7 +82,10 @@ this._productService.addProduct(formdata).subscribe({
       this._toasterService.success(response[0].message, 'Success');
          this.getAllProduct();
           this.fileName='';
+          this.SelectedFile = null;
+          this.imagePreview = null;
          this.productForm.reset();
+         this._commonService.closeModal('productModal');
   },
   error:(error:any)=>{
      if (error.error?.response) {
@@ -111,6 +115,7 @@ onFileSelected(event: any) {
 
   if (!file) return;
 
+  this.SelectedFile = file;
   this.fileName = file.name;
   this.isUploading = true;
    const reader = new FileReader();
@@ -123,9 +128,9 @@ onFileSelected(event: any) {
   setTimeout(() => {
     this.isUploading = false;
   }, 2000);
-    this.productForm.patchValue({
-    image: file
-  });
+  this.productForm.get('image')?.setValue(file);
+  this.productForm.get('image')?.markAsTouched();
+  this.productForm.get('image')?.updateValueAndValidity();
 }
 
 
@@ -208,7 +213,11 @@ formdata.append('product_Id',String(this.product_Id));
       }
       this._toasterService.success(response[0].message, 'Success');
          this.getAllProduct();
+         this.fileName='';
+         this.SelectedFile = null;
+         this.imagePreview = null;
          this.productForm.reset();
+       this._commonService.closeModal('productModal');
   },
   error:(error)=>{
      if (error.error?.response) {
@@ -262,4 +271,9 @@ formdata.append('product_Id',String(this.product_Id));
       });
     }, 100);
   }
+
+  /**
+   * Close the product modal
+   */
+
 }

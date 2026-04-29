@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { PermissionService } from '../../Service/permission.service';
+import { CommonService } from '../../Service/common.service';
 
 @Component({
   selector: 'app-permission',
@@ -21,7 +22,7 @@ permissionForm! :FormGroup;
 
   isEdit : boolean = true;
   permission_Id =0;
-  constructor(private _categoryService:CategoryService,private _fb: FormBuilder,private _toasterService:ToastrService, private _permissionService: PermissionService) { }
+  constructor(private _categoryService:CategoryService,private _commonService: CommonService,private _fb: FormBuilder,private _toasterService:ToastrService, private _permissionService: PermissionService) { }
 
   ngOnInit(): void {
     this.SetValidation();
@@ -37,7 +38,6 @@ addButton(){
   this.permissionForm.reset();
 }
 addPermission(){
-  debugger
   if(this.permissionForm.invalid){
    this.permissionForm.markAllAsTouched();
     return;
@@ -50,6 +50,7 @@ this._permissionService.addPermission(this.permissionForm.value).subscribe({
       this._toasterService.success(response[0].message, 'Success');
          this.getPermission()
          this.permissionForm.reset();
+           this._commonService.closeModal('categoryModal');
   },
   error:(error)=>{
      if (error.error?.response) {
@@ -59,7 +60,6 @@ this._permissionService.addPermission(this.permissionForm.value).subscribe({
 });
 }
 searchDetails(){
-  debugger
 if(this.searchText ==''){
   this.permissionsResponseList= this.searchResponseList;
   return;
@@ -71,10 +71,8 @@ if(this.searchText ==''){
  })
 }
 getPermission(){
-  debugger
 this._permissionService.getPermission().subscribe({
   next:(response:any)=>{
-    debugger
       this.permissionsResponseList =response[0];
       this.searchResponseList =response[0];
   },
@@ -87,10 +85,8 @@ deletePermission(response:any){
  this.permission_Id = response.permission_Id
 }
   confirmDelete(){
-    debugger
   this._permissionService.deletePermission(this.permission_Id).subscribe({
     next:(response:any)=>{
-      debugger
       if(response[1].status !== "200"){
       this._toasterService.error(response[0].message, 'Warning');
         }
@@ -109,7 +105,6 @@ deletePermission(response:any){
     this.permission_Id= response.permission_Id;
   }
  updateData(){
-  debugger
   if(this.permissionForm.invalid){
    this.permissionForm.markAllAsTouched();
     return;
@@ -123,6 +118,7 @@ deletePermission(response:any){
       this._toasterService.success(response[0].message, 'Success');
          this.getPermission();
          this.permissionForm.reset();
+          this._commonService.closeModal('categoryModal');
   },
   error:(error)=>{
      if (error.error?.response) {

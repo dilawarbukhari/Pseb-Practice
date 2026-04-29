@@ -65,14 +65,7 @@
             <span class="badge bg-info">{{item.quantity}} units</span>
           </td>
           <td>
-            <small class="text-muted description-cell"
-                   data-bs-toggle="tooltip"
-                   data-bs-placement="top"
-                   data-bs-html="true"
-                   [attr.title]="getFullText(item.description)"
-                   [attr.data-bs-original-title]="getFullText(item.description)">
-              {{ truncateText(item.description, 4) }}
-            </small>
+            <small class="text-muted">{{item.description}}</small>
           </td>
           <td class="d-flex justify-content-end gap-2">
             <button class="btn btn-sm btn-edit me-2"
@@ -188,27 +181,9 @@
               </div>
 
               <!-- DESCRIPTION -->
-
               <div class="mb-3">
-  <label class="form-label small fw-bold text-muted">DESCRIPTION</label>
-
-  <textarea
-    class="form-control form-control-theme"
-    formControlName="description"
-    placeholder="Enter description"
-    rows="3">
-  </textarea>
-
-  <div class="error-message"
-       *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid && productForm.get('description')?.hasError('required')">
-    <i class="bi bi-exclamation-circle me-1"></i>Description is required.
-  </div>
-</div>
-  </div>
-    </div>
-              <!-- <div class="mb-3">
                 <label class="form-label small fw-bold text-muted">DESCRIPTION</label>
-                <input type="textarea"
+                <input type="text"
                        class="form-control form-control-theme"
                        formControlName="description"
                        placeholder="Enter description">
@@ -218,7 +193,7 @@
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
 
           <!-- IMAGE SECTION -->
           <div class="row">
@@ -241,7 +216,6 @@
                 </div>
                 <input type="file"
                        #fileInput
-                       formControlName="image"
                        class="d-none"
                        (change)="onFileSelected($event)"
                        accept="image/*">
@@ -265,7 +239,6 @@
                 <input type="file"
                        #fileInput
                        hidden
-                       formControlName="image"
                        (change)="onFileSelected($event)">
               </div>
             </div>
@@ -279,7 +252,8 @@
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-theme w-100 py-2"
+              <button type="button"
+                      class="btn btn-theme w-100 py-2"
                       (click)="isEdit ? addProduct() : updateProduct()">
                 <i class="bi bi-check-circle me-2"></i>{{isEdit ? 'Save' : 'Update'}}
               </button>

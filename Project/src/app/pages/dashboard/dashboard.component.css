@@ -164,6 +164,8 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-header {
@@ -196,12 +198,13 @@
 /* Orders Table */
 .orders-table {
   padding: 0;
+  /* overflow-x: auto; */
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 100px 150px 100px 120px 120px;
-  gap: 10px;
+  grid-template-columns: 90px 140px 100px 110px 150px;
+  gap: 12px;
   padding: 16px 24px;
   background: #f7fafc;
   font-size: 12px;
@@ -210,6 +213,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid #e2e8f0;
+  min-width: 650px;
 }
 
 .table-body {
@@ -218,12 +222,13 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 100px 150px 100px 120px 120px;
-  gap: 10px;
+  grid-template-columns: 90px 140px 100px 110px 150px;
+  gap: 12px;
   padding: 16px 24px;
   border-bottom: 1px solid #e2e8f0;
   align-items: center;
   transition: background-color 0.3s ease;
+  min-width: 650px;
 }
 
 .table-row:hover {
@@ -233,6 +238,9 @@
 .table-col {
   font-size: 13px;
   color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .col-order-id,
@@ -290,6 +298,8 @@
 .date {
   font-size: 12px;
   color: #718096;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .no-data {

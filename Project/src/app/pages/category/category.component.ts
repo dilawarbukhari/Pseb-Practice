@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { UpdateCategoryRequest } from '../../Interface/updateCategory';
 import { elementAt } from 'rxjs';
+import { CommonService } from '../../Service/common.service';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class CategoryComponent implements OnInit {
   updateCategoryRequest :UpdateCategoryRequest;
   isEdit : boolean = true;
   category_id =0;
-  constructor(private _categoryService:CategoryService,private _fb: FormBuilder,private _toasterService:ToastrService){
+  constructor(private _categoryService:CategoryService, private _commonService:CommonService ,private _fb: FormBuilder,private _toasterService:ToastrService){
 this.updateCategoryRequest= new UpdateCategoryRequest();
   }
   ngOnInit(): void {
@@ -39,7 +40,6 @@ addButton(){
   this.categoryForm.reset();
 }
 addCategory(){
-  debugger
   if(this.categoryForm.invalid){
    this.categoryForm.markAllAsTouched();
     return;
@@ -52,6 +52,7 @@ this._categoryService.addCategory(this.categoryForm.value).subscribe({
       this._toasterService.success(response[0].message, 'Success');
          this.getAllCategories();
          this.categoryForm.reset();
+        this._commonService.closeModal('categoryModal');
   },
   error:(error)=>{
      if (error.error?.response) {
@@ -61,7 +62,6 @@ this._categoryService.addCategory(this.categoryForm.value).subscribe({
 });
 }
 searchDetails(){
-  debugger
 if(this.searchText ==''){
   this.categoryResponseList= this.searchResponseList;
   return;
@@ -76,7 +76,6 @@ getAllCategories(){
 
 this._categoryService.getCategories().subscribe({
   next:(response:any)=>{
-      debugger
       this.categoryResponseList =response[0];
       this.searchResponseList=response[0];
   },
@@ -89,7 +88,6 @@ deleteCategory(response:any){
  this.category_id = response.category_id
 }
   confirmDelete(){
-    debugger
   this._categoryService.deleteCategory(this.category_id).subscribe({
     next:(response:any)=>{
       debugger
@@ -106,13 +104,11 @@ deleteCategory(response:any){
   })
   }
   updatedetails(response:any){
-    debugger
     this.isEdit=false;
     this.categoryForm.patchValue(response);
     this.category_id= response.category_id;
   }
  updateData(){
-  debugger
   this.updateCategoryRequest= this.categoryForm.value;
   this.updateCategoryRequest.category_id= this.category_id;
 
@@ -124,6 +120,7 @@ deleteCategory(response:any){
       this._toasterService.success(response[0].message, 'Success');
          this.getAllCategories();
          this.categoryForm.reset();
+          this._commonService.closeModal('categoryModal');
   },
   error:(error)=>{
      if (error.error?.response) {
