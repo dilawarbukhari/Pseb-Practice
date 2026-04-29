@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { UpdateProductRequest } from '../../Interface/updateProduct';
 import { DeferBlockFixture } from '@angular/core/testing';
 
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-product',
@@ -136,6 +137,8 @@ this._productService.getProduct().subscribe({
       debugger
       this.productResponseList =response[0];
       this.searchResponseList=response[0];
+      // Initialize tooltips after data is loaded
+      this.initializeTooltips();
   },
   error:(error)=>{
 if(error.error?.response){
@@ -213,5 +216,50 @@ formdata.append('product_Id',String(this.product_Id));
   }
 }
 });
+  }
+
+  /**
+   * Truncate text to a specified number of words
+   * @param text - The text to truncate
+   * @param wordLimit - Number of words to show (default: 4)
+   * @returns Truncated text with ellipsis if exceeds word limit
+   */
+  truncateText(text: string, wordLimit: number = 4): string {
+    if (!text) return '';
+    const words = text.trim().split(/\s+/);
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
+  }
+
+  /**
+   * Get full text for tooltip
+   * @param text - The full text
+   * @returns Full text for displaying in tooltip
+   */
+  getFullText(text: string): string {
+    return text || '';
+  }
+
+  /**
+   * Initialize Bootstrap tooltips for description cells
+   */
+  initializeTooltips(): void {
+    setTimeout(() => {
+      // Get all tooltip elements
+      const tooltipElements = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltipElements.forEach((element: any) => {
+        // Destroy existing tooltip if any
+        const existingTooltip = bootstrap.Tooltip.getInstance(element);
+        if (existingTooltip) {
+          existingTooltip.dispose();
+        }
+        // Create new tooltip
+        new bootstrap.Tooltip(element, {
+          delay: { show: 200, hide: 100 }
+        });
+      });
+    }, 100);
   }
 }
