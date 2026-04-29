@@ -3,6 +3,7 @@ require './jwtHandler.php';
 require './DbContext/db.php';
 require './EmailServer.php';
 require './vendor/autoload.php';
+// require './config.php';
 require './Configuration.php';
 
 use Firebase\JWT\JWT;
@@ -20,7 +21,7 @@ class Model extends db
 
         parent::__construct();
         $this->_Jwt = new JwtHandler();
-        $this->emailServer = new EmailServer();
+        $this->emailServer = new Config();
     }
 
     public function deletePermission($input)
@@ -379,12 +380,12 @@ class Model extends db
             return [['message' => 'Please login again'],  ["status" => "400"]];
         }
         $userId = $this->getUserId($this-> getBearerToken());
-     if (!$this->hasPermission($userId, "update_user")) {
-            return [
-                ["message" => "you have no permission to do the process"],
-                ["status" => "400"]
-            ];
-        }
+    //  if (!$this->hasPermission($userId, "update_user")) {
+    //         return [
+    //             ["message" => "you have no permission to do the process"],
+    //             ["status" => "400"]
+    //         ];
+    //     }
 
         $firstname = $input['firstname'];
         $lastName = $input['lastname'];
@@ -732,7 +733,8 @@ public function addProduct($input, $file = null)
     $row = $result->fetch_assoc();
     $IsChanged = $row['isChanged'];
  $IsTerminated = $row['IsTerminated'];
- if($IsTerminated){
+ 
+ if($IsTerminated !== 0){
   return [
                 ["message" => 'Please contact Administration to reset your password'],
                 ['status' => '400']
@@ -741,6 +743,10 @@ public function addProduct($input, $file = null)
     if ($row['isChanged'] != true) {
 
         $lastLogin = strtotime($row['last_login']);
+
+        // echo $lastLogin;
+        // echo (time() - (15 * 24 * 60 * 60));
+        // die;
 
         if ($lastLogin < time() - (15 * 24 * 60 * 60)) {
 
@@ -1033,7 +1039,7 @@ public function addProduct($input, $file = null)
                    
                 ];
             }
-            //  $this->emailServer->sendEmail($email, $password);
+             $this->emailServer->sendemail($email, $password);
             return [
                 ['message' => 'Data has been added successfully and email sent successfully'],
                 ['status' => '200'],
