@@ -173,12 +173,12 @@
             <div class="product-stats">
               <div class="stat">
                 <span class="label">Sales:</span>
-                <span class="value">{{ product.sales_count || 0 }}</span>
+                <span class="value">{{ product.total_sold || 0 }}</span>
               </div>
-              <div class="stat">
+              <!-- <div class="stat">
                 <span class="label">Revenue:</span>
                 <span class="value">${{ product.total_revenue || '0' }}</span>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@
         <div class="category-item" *ngFor="let category of topCategories">
           <div class="category-info">
             <h4 class="category-name">{{ category.category_name || 'Category' }}</h4>
-            <p class="category-detail">{{ category.product_count || 0 }} Products</p>
+            <p class="category-detail">{{ category.total_products  || 0 }} Products</p>
           </div>
           <div class="category-progress">
             <div class="progress-bar">

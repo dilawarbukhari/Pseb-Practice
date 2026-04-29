@@ -45,6 +45,18 @@
                   <p class="total-price">Rs.{{ item?.price * item?.quantity }}</p>
                 </div>
               </div>
+
+              <!-- Action Buttons Row -->
+              <div class="row mt-4 pt-3 border-top">
+                <div class="col-12 d-flex justify-content-end gap-2">
+                  <button type="button" 
+                          class="btn btn-outline-danger btn-sm rounded-pill px-4 py-2 fw-500 transition-all"
+                          (click)="cancelOrder(item)"                       
+                          title="Cancel this order">
+                    <i class="bi bi-x-circle me-2"></i>Cancel Order
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

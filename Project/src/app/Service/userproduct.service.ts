@@ -11,6 +11,13 @@ export class UserProductService {
 Url = 'http://localhost/MVC/route.php';
   constructor(private _http : HttpClient) { 
   }
+cancelOrder(order_Id:number):Observable<any>{
+ const payload ={
+order_Id: order_Id,
+ process: 'cancelOrder',
+ }
+ return this._http.post<any>(this.Url,payload);
+}
  orderPlace(data:any):Observable<any>{
  const payload ={
 ...data,
