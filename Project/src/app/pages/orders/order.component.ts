@@ -20,7 +20,6 @@ export class OrderComponent implements OnInit{
 
 
 getAllOrders(){
-  debugger
   this._userProductService.getAllOrders().subscribe({
     next:(response:any)=>{
       debugger

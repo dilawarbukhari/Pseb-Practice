@@ -145,7 +145,7 @@
               </span>
             </div>  
             <div class="table-col col-date">
-              <span class="date">{{ order.created_At || 'N/A' }}</span>
+              <span class="date">{{ order.created_At | date:'shortDate' }}</span>
             </div>
           </div>
         </div>

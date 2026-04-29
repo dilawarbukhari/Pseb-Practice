@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../Service/user.service';
 import { RoleService } from '../../Service/role.service';
 import { UpdateUserRequest } from '../../Interface/updateUser';
+import { CommonService } from '../../Service/common.service';
 
 @Component({
   selector: 'app-usermanagement',
@@ -22,7 +23,7 @@ userForm! :FormGroup;
 updateUserRequest :UpdateUserRequest;
   isEdit : boolean = true;
   User_Id =0;
-  constructor( private _userService:UserService, private _roleService:RoleService, private _fb: FormBuilder,private _toasterService:ToastrService){
+  constructor( private _userService:UserService,private _commonService:CommonService, private _roleService:RoleService, private _fb: FormBuilder,private _toasterService:ToastrService){
 this.updateUserRequest= new UpdateUserRequest();
   }
   ngOnInit(): void {
@@ -46,7 +47,6 @@ addButton(){
   this.userForm.reset();
 }
 addUser(){
-  debugger
   if(this.userForm.invalid){
    this.userForm.markAllAsTouched();
     return;
@@ -60,6 +60,7 @@ this._userService.addUser(this.userForm.value).subscribe({
       this._toasterService.success(response[0].message, 'Success');
          this.getAllUsers();
          this.userForm.reset();
+         this._commonService.closeModal('userModal');
   },
   error:(error:any)=>{
      if (error.error?.response) {
@@ -141,7 +142,7 @@ deleteUser(response:any){
     this.User_Id= response.Id;
   }
  updateUser(){
-  debugger
+
   this.updateUserRequest= this.userForm.value;
   this.updateUserRequest.user_Id= this.User_Id;
 
@@ -152,6 +153,7 @@ deleteUser(response:any){
       }
       this._toasterService.success(response[0].message, 'Success');
          this.getAllUsers();
+       this._commonService.closeModal('userModal');
   },
   error:(error)=>{
      if (error.error?.response) {

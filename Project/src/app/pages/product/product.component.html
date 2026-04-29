@@ -216,7 +216,6 @@
                 </div>
                 <input type="file"
                        #fileInput
-                       formControlName="image"
                        class="d-none"
                        (change)="onFileSelected($event)"
                        accept="image/*">
@@ -240,7 +239,6 @@
                 <input type="file"
                        #fileInput
                        hidden
-                       formControlName="image"
                        (change)="onFileSelected($event)">
               </div>
             </div>
@@ -254,7 +252,8 @@
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-theme w-100 py-2"
+              <button type="button"
+                      class="btn btn-theme w-100 py-2"
                       (click)="isEdit ? addProduct() : updateProduct()">
                 <i class="bi bi-check-circle me-2"></i>{{isEdit ? 'Save' : 'Update'}}
               </button>

@@ -51,8 +51,10 @@
                 <div class="col-12 d-flex justify-content-end gap-2">
                   <button type="button" 
                           class="btn btn-outline-danger btn-sm rounded-pill px-4 py-2 fw-500 transition-all"
-                          (click)="cancelOrder(item)"                       
+                          (click)="cancelOrder(item)"
+                          [disabled]="item?.status_Name === 'Cancelled' || item?.status_Name === 'Delivered'"                 
                           title="Cancel this order">
+                          
                     <i class="bi bi-x-circle me-2"></i>Cancel Order
                   </button>
                 </div>

@@ -26,7 +26,6 @@ order_Id: order_Id,
 return this._http.post<any>(this.Url,payload);
 }
 getAllOrders():Observable<any>{
-    debugger
 const process= 'getOrderDetail';
  return this._http.post<any>(this.Url, {process});
 }

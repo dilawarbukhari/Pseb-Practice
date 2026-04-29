@@ -4,6 +4,7 @@ import { RoleService } from '../../Service/role.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { PermissionService } from '../../Service/permission.service';
+import { CommonService } from '../../Service/common.service';
 
 @Component({
   selector: 'app-rolepermission',
@@ -25,7 +26,7 @@ roleId=0;
 selectedRole: any;
 
 IsEdit = false;
- constructor(private _roleService: RoleService,private _toasterService : ToastrService,private _permissionService: PermissionService) { }
+ constructor(private _roleService: RoleService,private _commonService: CommonService,private _toasterService : ToastrService,private _permissionService: PermissionService) { }
 
  ngOnInit(): void {
     this.getRoles();
@@ -107,10 +108,7 @@ deleteRole() {
     }
       this._toasterService.success(response[0].message, 'Success');
       this.getRoles();
-        let modal = new (window as any).bootstrap.Modal(
-    document.getElementById('deleteModal')
-  );
-  modal.hide();
+          this._commonService.closeModal('deleteModal');
   },
   error: (error) => {
     if (error.error?.response) {
@@ -135,6 +133,7 @@ updateRole() {
         this._toasterService.success(response[0].message, 'Success');
         this.getRoles();
         this.roleName = '';
+         this._commonService.closeModal('roleModal');
       },
     error: (error) => {
       if (error.error?.response) {
@@ -181,6 +180,7 @@ saveRole() {
         this._toasterService.success(response[0].message, 'Success');
         this.getRoles();
         this.roleName = '';
+        this._commonService.closeModal('roleModal');
       },
     error: (error) => {
       if (error.error?.response) {

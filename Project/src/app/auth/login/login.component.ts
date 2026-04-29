@@ -5,6 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { CommonService } from '../../Service/common.service';
+import { UserService } from '../../Service/user.service';
 
 
 @Component({
@@ -17,9 +19,12 @@ import { ToastrService } from 'ngx-toastr';
 export class LoginComponent implements OnInit {
  loginForm! : FormGroup;
  token = '';
+ userResponseList:any=[];
+ role='' ;
+ rolename='' ;
  showRoleSelection = false;
 
-  public constructor(private _fb: FormBuilder,private _authService : AuthService,private _toastr: ToastrService,private _router: Router){
+  public constructor(private _commonService:CommonService,private _userService:UserService,private _fb: FormBuilder,private _authService : AuthService,private _toastr: ToastrService,private _router: Router){
   }
   ngOnInit(){
   this.setValidation();
@@ -43,6 +48,26 @@ setValidation(){
  password: ['', [Validators.required]],  
   });
 }
+
+getUserDetails(){
+  debugger
+  const userId = this._commonService.getUserId();
+ this._userService.getUser(userId!).subscribe({
+  next:(response:any)=>{
+   this.role= response[0][0].role_name.trim();
+if(this.role === 'Admin'  ||  this.role == 'Super Admin'){
+              this._router.navigateByUrl('/pages/dashboard');
+    } else if(this.role === 'Buyer'){
+        this._router.navigateByUrl('/pages/userproduct');
+    }else{
+      this._router.navigateByUrl('/pages/product');
+    }
+  },
+  error:(error:any)=>{
+    console.error('Error fetching user details:', error);
+  }
+ });
+}
 onLogin(){
 
 if(this.loginForm.valid){
@@ -52,7 +77,6 @@ this._authService.login(this.loginForm.value).subscribe({
       if(response[1].status !== "200"){
      this._toastr.error(response[0].message, 'Warning');
       }
-         debugger
       const data = response[2].data;
       const isChanged = data[1].isChanged;
     
@@ -64,9 +88,9 @@ this._authService.login(this.loginForm.value).subscribe({
         return;
       }
     localStorage.setItem('accessToken', data[0].accessToken);
-              this._toastr.success(response[0].message, 'Success');
-              this._router.navigateByUrl('/pages/dashboard');
-    },
+              this._toastr.success(response[0].message, 'Success');  
+              this.getUserDetails();       
+  },
     error: (error) => {
       if (error.error?.response) {
         this._toastr.error(error.error.response, 'Login Failed');

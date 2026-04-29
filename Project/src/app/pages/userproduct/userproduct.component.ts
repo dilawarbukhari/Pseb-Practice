@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UserProductService } from '../../Service/userproduct.service';
 import { CategoryService } from '../../Service/category.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonService } from '../../Service/common.service';
 @Component({
   selector: 'app-userproduct',
   imports: [CommonModule, ReactiveFormsModule,FormsModule
@@ -28,7 +29,7 @@ export class UserproductComponent implements OnInit {
 
   selectedProduct: any = null;
 cartCount: number = 0;
-  constructor(private _Fb:FormBuilder,private _productService :ProductService,private _userProduct: UserProductService, private _toasterService : ToastrService, private _route:Router,private _categoryService :CategoryService) { }
+  constructor(private _Fb:FormBuilder,private _commonService: CommonService,private _productService :ProductService,private _userProduct: UserProductService, private _toasterService : ToastrService, private _route:Router,private _categoryService :CategoryService) { }
 
 
 ngOnInit(): void {
@@ -234,7 +235,6 @@ orderPlace(){
   }
   this._userProduct.orderPlace(order).subscribe({
     next:(response:any)=>{
-      debugger
      if(response[1].status !== 200){
      this._toasterService.error(response[0].message, 'Warning');
       }
@@ -244,6 +244,7 @@ orderPlace(){
       localStorage.setItem('cart', JSON.stringify(this.cartList));
       this.cartCount = this.cartList.reduce((total: number, item: any) => total + (item.cartitem || 0), 0);
       localStorage.setItem('cartCount', JSON.stringify(this.cartCount));
+      this._commonService.closeModal('cartModal');
         
 },
 error:(error)=>{
