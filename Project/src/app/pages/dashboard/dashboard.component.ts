@@ -52,11 +52,38 @@ export class DashboardComponent implements OnInit {
     this.getActiveUsers();
     this.getThisMonth();
     this.getRecentOrder();
+    this.getTopProduct();
+    this.getCategoryProduct();
+  }
+  getCategoryProduct(){
+     this._dashboardService.getCategoryProduct().subscribe({
+    next:(response:any)=>{
+   debugger
+      this.topCategories = response.data;
+    },
+    error:(error)=>{
+      if(error.error?.response){
+        this._toasterService.error(error.error.response, 'Error');
+      }
+    }
+  });
+  }
+  getTopProduct(){
+     this._dashboardService.getTopProduct().subscribe({
+    next:(response:any)=>{
+      this.topProducts = response.data;
+    },
+    error:(error)=>{
+      if(error.error?.response){
+        this._toasterService.error(error.error.response, 'Error');
+      }
+    }
+  });
   }
   getRecentOrder(){
      this._dashboardService.getRecentOrder().subscribe({
     next:(response:any)=>{
-   debugger
+
       this.recentOrders = response.data;
     },
     error:(error)=>{

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { UpdateProductRequest } from '../../Interface/updateProduct';
 import { DeferBlockFixture } from '@angular/core/testing';
 
+
 @Component({
   selector: 'app-product',
   imports: [ReactiveFormsModule,FormsModule,CommonModule],
@@ -35,6 +36,8 @@ this.updateProductRequest= new UpdateProductRequest();
     this.getAllProduct();
      this.getAllCategories();
   }
+
+
 SetValidation(){
    this.productForm = this._fb.group({
   product_name: ['', Validators.required],

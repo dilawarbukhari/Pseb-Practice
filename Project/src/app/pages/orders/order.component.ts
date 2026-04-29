@@ -35,4 +35,39 @@ getAllOrders(){
   })
 }
 
+/**
+ * Check if an order can be cancelled
+ * Orders can only be cancelled if they are pending or in processing state
+ */
+isOrderCancelable(order: any): boolean {
+  const cancelableStatuses = ['pending', 'processing', 'ordered'];
+  return !cancelableStatuses.includes(order?.status_Name?.toLowerCase());
+}
+
+/**
+ * Cancel an order
+ */
+cancelOrder(order: any): void {
+  if (!order?.order_Id) {
+    this._toasterService.warning('Invalid order', 'Warning');
+    return;
+  }
+
+ this._userProductService.cancelOrder(order.order_Id).subscribe({
+    next: (response: any) => {
+      if(response[1].status !== 200){
+      this._toasterService.error(response[0].message, 'Warning');
+      }
+      this._toasterService.success('Order cancelled successfully', 'Success');
+      this.getAllOrders();
+    },
+    error: (error) => {
+      if (error.error?.response) {
+        this._toasterService.error(error.error.response, 'Error');
+      }
+    }
+  });
+}
+
+
 }
