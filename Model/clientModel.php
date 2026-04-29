@@ -74,7 +74,7 @@ if ($queryItem->affected_rows > 0) {
  public function getOrderDetail(){
     $UserId = $this->getUserId($this->getBearerToken());
 
-    $sql = " Select o.order_Id,o.order_number,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where user_Id = ? AND o.IsDeleted = false AND oi.IsDeleted = false AND p.IsDeleted = false AND c.IsDeleted = false";
+    $sql = " Select o.order_Id,o.order_number,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where user_Id = ? AND o.IsDeleted = false AND oi.IsDeleted = false And o.isCancelled=false AND p.IsDeleted = false AND c.IsDeleted = false";
     $query = $this->conn->prepare($sql);
     $query->bind_param('i', $UserId);
     $query->execute();
@@ -93,7 +93,7 @@ if ($queryItem->affected_rows > 0) {
  public function getConfirmOrder(){
     $UserId = $this->getUserId($this->getBearerToken());
 
-    $sql = " Select o.order_Id,o.order_number,o.created_at,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where  o.IsDeleted = false AND oi.IsDeleted = false AND p.IsDeleted = false AND c.IsDeleted = false";
+    $sql = " Select o.order_Id,o.order_number,o.created_at,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where  o.IsDeleted = false AND o.isCancelled = false AND oi.IsDeleted = false AND p.IsDeleted = false AND c.IsDeleted = false";
     $query = $this->conn->prepare($sql);
     $query->execute();
     $result = $query->get_result();
@@ -128,9 +128,12 @@ public function updateOrderStatus($input){
 $order_Id = $input['order_Id'];
 $status = (int)($input['status_Id']);
 $orderUserId= $this->getorderUserId($order_Id);
+
+
 $email = $this->getEmail($orderUserId); 
 $orderNumber = $this->getordernumber($order_Id);
 $orderStatus = $this->getorderStatus($status);
+
 
 $UserId = $this->getUserId($this->getBearerToken());
 $Update_at= date('Y-m-d H:i:s',time());
@@ -138,13 +141,31 @@ $Update_at= date('Y-m-d H:i:s',time());
 
 $sql = " Update orders Set status = ?, updated_at = ? ,updated_by = ?  Where order_Id = ? AND user_id = ? AND IsDeleted = false";
 $query = $this->conn->prepare($sql);
-$query->bind_param('isiii', $status, $Update_at, $UserId, $order_Id, $UserId);
+$query->bind_param('isiii', $status, $Update_at, $UserId, $order_Id, $orderUserId);
 $query->execute();
+// var_dump($query);
+// die;
 if ($query->affected_rows > 0) {
 $this->_config->sendOrderStatusUpdate($email, $orderNumber, $orderStatus);
     return [['message' => 'Order status updated successfully and email has been sent'],['status' => 200]];
 } else {
     return [['message' => 'Failed to update order status'],['status' => 400]];
+}
+}
+
+public function cancelOrder($input){
+$order_Id = $input['order_Id'];
+$orderUserId= $this->getorderUserId($order_Id);
+
+$sql = " Update orders Set status = 4 ,isCancelled = true Where order_Id = ? AND user_Id = ? AND IsDeleted = false";
+$query = $this->conn->prepare($sql);
+$query->bind_param('ii', $order_Id, $orderUserId);
+$query->execute();
+
+if ($query->affected_rows > 0) {
+    return [['message' => 'Order cancelled successfully'],['status' => 200]];
+} else {
+    return [['message' => 'Failed to cancel order'],['status' => 400]];
 }
 }
 
@@ -187,7 +208,7 @@ if ($result->num_rows > 0) {
 }
 
 public function getTotalUser(){
-$sql= "Select count(*) as total_users from signup where IsDeleted = false";
+$sql= "Select count(*) as total_users from signup where IsDeleted = false ";
 $query = $this->conn->prepare($sql);
 $query->execute();
 $result = $query->get_result();
@@ -223,7 +244,7 @@ if ($result->num_rows > 0) {
 }
 }
 public function getRecentOrder(){
-$sql="SELECT o.order_id,o.order_number, o.user_Id, u.Firstname , u.Lastname, o.total_amount,o.created_At, o.status, s.status_Name FROM orders o JOIN signup u ON o.user_Id = u.Id JOIN status s ON o.status = s.status_Id ORDER BY o.created_at DESC LIMIT 5;";
+$sql="SELECT o.order_id,o.order_number, o.user_Id, u.Firstname , u.Lastname, o.total_amount,o.created_At, o.status, s.status_Name FROM orders o JOIN signup u ON o.user_Id = u.Id JOIN status s ON o.status = s.status_Id Where o.isCancelled = false  And o.isDeleted=false   ORDER BY o.created_at DESC LIMIT 5;";
 $query = $this->conn->prepare($sql);
 $query->execute();
 $result = $query->get_result();
@@ -273,6 +294,49 @@ WHERE IsDeleted = false;";
         return ['data' => $data, 'status' => 200];
     } else {
         return ['message' => 'Failed to fetch total revenue', 'status' => 400];
+    }
+}
+public function getCategoryProduct(){
+    $sql="SELECT c.category_id, c.category_name AS category_name, COUNT(p.product_Id) AS total_products FROM categories c LEFT JOIN products p ON p.category_id = c.category_id Where c.isDeleted =false GROUP BY c.category_id, c.category_name;";
+    $query = $this->conn->prepare($sql);
+    $query->execute();
+    $result = $query->get_result();
+    $User=[];
+    if ($result->num_rows > 0) {
+        while($row= $result->fetch_assoc()){
+            $User[]=$row;
+        }
+        return ['data' => $User, 'status' => 200];
+    } else {
+        return ['message' => 'Failed to fetch category products', 'status' => 400];
+    }
+}
+public function getTopProduct(){
+    $sql="SELECT 
+    p.product_Id,
+    p.product_name,
+        c.category_name,
+    SUM(oi.quantity) AS total_sold
+FROM order_items oi
+JOIN products p ON oi.product_id = p.product_Id
+Join Categories c ON c.category_Id= p.category_Id
+JOIN orders o ON oi.order_id = o.order_id
+WHERE o.IsDeleted = false
+AND o.status = '3'
+GROUP BY p.product_Id, p.product_name,c.category_name
+ORDER BY total_sold DESC
+LIMIT 5";
+    $query = $this->conn->prepare($sql);
+    $query->execute();
+    $result = $query->get_result();
+    $User=[];
+    if ($result->num_rows > 0) {
+        while($row= $result->fetch_assoc()){
+            $User[]=$row;
+        }
+        return ['data' => $User, 'status' => 200];
+    } else {
+        return ['message' => 'Failed to fetch top products', 'status' => 400];
     }
 }
 public function getActiveUsers(){

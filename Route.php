@@ -29,6 +29,18 @@ $process= $input['process'];
 $controller = new Controller();
 $client = new clientController();
 switch ($process) {
+case 'cancelOrder':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getCategoryProduct':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getTopProduct':
+    $response = $client->checkCondition($input);
+    echo $response;
+    break;
   case 'getTotalRevenue':
     $response = $client->checkCondition($input);
     echo $response;

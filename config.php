@@ -85,7 +85,7 @@ class Config
             </table>
 
             <p style="margin-top:20px;">
-<strong>Total Amount:</strong> Rs ' . number_format($input['totalAmount'], 2) . ' <br>
+<strong>Total Amount with 5% Tax:</strong> Rs ' . number_format($input['totalAmount'], 2) . ' <br>
                 <strong>Status:</strong> Pending <br>
                 <strong>Payment:</strong> ' . ucfirst("Credit Card") . '
             </p>
@@ -163,6 +163,65 @@ public function sendOrderStatusUpdate($email, $order_number, $status)
             <hr>
             <p style="text-align:center;">Need help? Contact our support team anytime.</p>
         </div>';
+
+        $mail->Body = $body;
+
+        return $mail->send();
+
+    } catch (Exception $e) {
+        error_log("Status update email failed: " . $mail->ErrorInfo);
+        return false;
+    }
+}
+public function sendemail($email, $password)
+{
+    try {
+        $mail = $this->getMailer();
+        $mail->addAddress($email);
+        $mail->isHTML(true);
+
+        // Subject based on status
+        $mail->Subject = 'Account Created - Bukhari Mart';
+
+        // Status message
+      $message = 'Your account has been successfully created 🎉';
+
+        // Email Body
+      $body = '
+<div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #eee; padding:20px;">
+    
+    <h2 style="text-align:center; color:#2c3e50;">Welcome to Bukhari Mart 🎉</h2>
+
+    <p>Hi,</p>
+    <p>Your account has been successfully created.</p>
+
+    <div style="background:#f7f7f7; padding:15px; border-radius:5px; margin-top:15px;">
+        <p><strong>Email:</strong> ' . $email . '</p>
+        <p><strong>Password:</strong> ' . $password . '</p>
+        <p><strong>Created On:</strong> ' . date('F j, Y, g:i a') . '</p>
+    </div>
+
+    <p style="margin-top:20px;">
+        You can now login and start using your account.<br>
+        For security, please change your password after login 🔒
+    </p>
+
+    <div style="text-align:center; margin-top:25px;">
+        <a href="http://yourwebsite.com/login" 
+           style="background:#3498db; color:#fff; padding:10px 20px; text-decoration:none; border-radius:5px;">
+           Login Now
+        </a>
+    </div>
+
+    <hr>
+    <p style="text-align:center;">
+        Need help? Contact our support team anytime.
+    </p>
+
+    <p style="text-align:center;">
+        ❤️ Thank you for joining <strong>Bukhari Mart</strong>
+    </p>
+</div>';
 
         $mail->Body = $body;
 

@@ -14,7 +14,7 @@ public function decodeJwt($token){
     $decodeToken = JWT::decode($token, new Key( $this->secretkey, 'HS256'));
     return array($decodeToken);
 }
-  public function generateaccessToken($userId,$expiry=900): string
+  public function generateaccessToken($userId,$expiry=3600): string
     {
         $issuedAt = time();
         $payload['iat'] = $issuedAt;
