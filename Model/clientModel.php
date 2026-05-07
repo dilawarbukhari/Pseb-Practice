@@ -74,7 +74,7 @@ if ($queryItem->affected_rows > 0) {
  public function getOrderDetail(){
     $UserId = $this->getUserId($this->getBearerToken());
 
-    $sql = " Select o.order_Id,o.order_number,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where user_Id = ? AND o.IsDeleted = false AND oi.IsDeleted = false And o.isCancelled=false AND p.IsDeleted = false AND c.IsDeleted = false";
+    $sql = " Select o.order_Id,o.order_number,o.user_id,o.status,s.status_Name,o.created_at,oi.product_id,oi.quantity,p.Image,p.product_name,p.category_id,p.description,c.Category_name,oi.price from orders o LEFT JOIN order_items oi ON o.order_Id = oi.order_id LEFT JOIN products p ON p.product_Id = oi.product_id LEFT JOIN categories c ON p.category_id = c.category_id  LEFT JOIN status s ON o.status = s.status_Id  Where user_Id = ? AND o.IsDeleted = false AND oi.IsDeleted = false AND p.IsDeleted = false AND c.IsDeleted = false";
     $query = $this->conn->prepare($sql);
     $query->bind_param('i', $UserId);
     $query->execute();
