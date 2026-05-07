@@ -60,7 +60,7 @@
     <ng-container *ngIf="filteredProductResponseList?.length > 0; else noOrders">
       <!-- Orders Grid -->
       <div class="row g-4">
-        <div class="col-12" *ngFor="let order of filteredProductResponseList; let i = index">
+        <div class="col-12" *ngFor="let order of filteredProductResponseList | paginate: { itemsPerPage: 5, currentPage: p }; let i = index">
           <div class="order-card">
             <div class="row g-0 align-items-center">
               <!-- Product Image -->
@@ -165,7 +165,13 @@
           </div>
         </div>
       </div>
+
+      <div class="pagination-footer">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>
     </ng-container>
+
+
 
     <!-- No Orders Template -->
     <ng-template #noOrders>

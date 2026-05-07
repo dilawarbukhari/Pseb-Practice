@@ -11,9 +11,10 @@ export class UserProductService {
 Url = 'http://localhost/MVC/route.php';
   constructor(private _http : HttpClient) { 
   }
-cancelOrder(order_Id:number):Observable<any>{
+cancelOrder(order:any):Observable<any>{
  const payload ={
-order_Id: order_Id,
+order_Id: order.order_Id,
+product_Id: order.product_id,
  process: 'cancelOrder',
  }
  return this._http.post<any>(this.Url,payload);
@@ -42,6 +43,10 @@ const process = 'updateOrderStatus';
 return this._http.post<any>(this.Url, { process, ...data });
 }
 
+Totalrecord():Observable<any>{
+const process= 'Totalrecord';
+ return this._http.post<any>(this.Url, {process});
+}
 getPendingOrders():Observable<any>{
 const process= 'getPendingOrders';
  return this._http.post<any>(this.Url, {process});

@@ -3,10 +3,12 @@ import { UserProductService } from '../../Service/userproduct.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 @Component({
   selector: 'app-ordermanagement',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './ordermanagement.component.html',
   styleUrl: './ordermanagement.component.css'
 })
@@ -15,7 +17,9 @@ productResponseList:any=[];
 PendingOrder:number=0;
 ShippedOrder:number=0;
 DeliveredOrder:number=0;
+TotalOrder:number=0;
 statusResponseList:any=[];
+  p: number = 1;
 filteredProductResponseList:any=[];
 searchTerm = '';
 statusOptions = [
@@ -31,9 +35,10 @@ constructor(private _productService: UserProductService, private _toasterService
 ngOnInit(): void {
   this.getAllProduct();
   this.getAllStatus();
-  this.getPendingOrder();
-  this.getShippedOrder();
-  this.getDeliveredOrder();
+  this.getTotalrecord();
+  // this.getPendingOrder();
+  // this.getShippedOrder();
+  // this.getDeliveredOrder();
 }
   
 getAllProduct(){
@@ -50,7 +55,22 @@ if(error.error?.response){
         this._toasterService.error(error.error.response, 'Error');
   } } })
 }
+getTotalrecord(){
+this._productService.Totalrecord().subscribe({
+    next:(response:any)=>{
+      this.PendingOrder = response.data[0].pending_orders;
+      this.ShippedOrder=response.data[0].shipped_orders;
+      this.TotalOrder=response.data[0].total_orders;
+      this.DeliveredOrder=response.data[0].delivered_orders;
+    },
+    error:(error)=>{
+      if(error.error?.response){
+        this._toasterService.error(error.error.response, 'Error');
+      }
+    }
+  });
 
+}
 getAllStatus(){
   this._productService.getStatus().subscribe({
     next:(response:any)=>{
@@ -67,6 +87,7 @@ getAllStatus(){
 
 
 onSearchChange() {
+  this.p = 1;
   const term = this.searchTerm.trim().toLowerCase();
   if (!term) {
     this.filteredProductResponseList = [...this.productResponseList];
@@ -84,11 +105,12 @@ onSearchChange() {
 
 updateStatus(product: any) {
 
-  if (!product?.status) {
+  if (!product?.status_Id) {
     this._toasterService.warning('Please select a status first', 'Warning');
     return;
   }
   const payload={
+    product_Id: product.product_id,
     order_Id: product.order_Id,
     status_Id: parseInt(product.selectedStatusId)
   }
@@ -140,7 +162,6 @@ getShippedOrder(){
 getDeliveredOrder(){
  this._productService.getDeliveredOrder().subscribe({
     next:(response:any)=>{
-  debugger
       this.DeliveredOrder = response.data.delivered_orders;
     },
     error:(error)=>{
@@ -168,4 +189,3 @@ getStatusIcon(status: string): string {
   return statusIcons[status] || 'info-circle';
 }
 }
-

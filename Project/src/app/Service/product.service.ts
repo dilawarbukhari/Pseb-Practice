@@ -34,6 +34,14 @@ getProduct():Observable<any>{
  }
 return this._http.post<any>(this.Url,payload);
 }
+
+getBuyerProduct():Observable<any>{
+  const payload ={
+ process: 'getBuyerProduct',
+ accessToken: this.token
+ }
+return this._http.post<any>(this.Url,payload);
+}
 updateProduct(formdata:FormData):Observable<any>{
   debugger
 //   const payload ={

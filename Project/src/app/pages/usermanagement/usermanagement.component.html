@@ -35,7 +35,7 @@
     <table class="table align-middle mb-0">
       <thead>
         <tr>
-          <th>Sr. No</th>
+          <th class="serial-column">Sr. No</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>Email</th>
@@ -45,8 +45,8 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let user of userResponseList; let i=index">
-          <td>{{i+1}}</td>
+        <tr *ngFor="let user of userResponseList | paginate: { itemsPerPage: 10, currentPage: p }; let i=index">
+          <td class="serial-column">{{i+1}}</td>
           <td class="fw-semibold">{{user.firstname}}</td>
           <td>{{user.lastname}}</td>
           <td>{{user.email}}</td>
@@ -72,7 +72,12 @@
           </td>
         </tr>
       </tbody>
+
     </table>
+
+    <div class="pagination-footer">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
   </div>
 
 </div>

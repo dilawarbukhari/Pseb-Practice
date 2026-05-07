@@ -6,10 +6,10 @@ import { UserService } from '../../Service/user.service';
 import { CategoryService } from '../../Service/category.service';
 import { DashboardService } from '../../Service/dashboard.service';
 import { ToastrService } from 'ngx-toastr';
-
+import { Router, RouterLink } from "@angular/router"; 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

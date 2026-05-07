@@ -1,0 +1,431 @@
+<style>
+  :host {
+    display: block;
+    min-height: 100vh;
+    --ink: #102033;
+    --muted: #6b7a90;
+    --line: rgba(16, 32, 51, 0.12);
+    --card: rgba(255, 255, 255, 0.88);
+    --primary: #0d9488;
+    --primary-dark: #0f766e;
+    --accent: #f59e0b;
+    --soft: #ecfeff;
+    --shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+    font-family: "Satoshi", "Plus Jakarta Sans", "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+
+  .verify-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 32px 18px;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(20, 184, 166, 0.2), transparent 32%),
+      radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.18), transparent 30%),
+      linear-gradient(135deg, #f8fafc 0%, #eefdfb 45%, #fff7ed 100%);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .verify-page::before,
+  .verify-page::after {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 999px;
+    border: 1px solid rgba(13, 148, 136, 0.16);
+    pointer-events: none;
+  }
+
+  .verify-page::before {
+    top: -90px;
+    left: -80px;
+  }
+
+  .verify-page::after {
+    right: -110px;
+    bottom: -120px;
+    border-color: rgba(245, 158, 11, 0.2);
+  }
+
+  .verify-card {
+    width: min(100%, 480px);
+    position: relative;
+    z-index: 1;
+    padding: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 34px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(22px);
+    animation: cardIn 0.65s ease both;
+  }
+
+  .brand-mark {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 22px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--primary), #22d3ee);
+    box-shadow: 0 18px 36px rgba(13, 148, 136, 0.28);
+  }
+
+  .brand-mark svg {
+    width: 34px;
+    height: 34px;
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .verify-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    margin-bottom: 14px;
+    border-radius: 999px;
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.16);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 42px);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .subtitle {
+    margin: 14px auto 0;
+    max-width: 350px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .email-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  .otp-form {
+    display: grid;
+    gap: 22px;
+  }
+
+  .otp-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .otp-input {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 800;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: 0.22s ease;
+  }
+
+  .otp-input:focus {
+    border-color: var(--primary);
+    box-shadow:
+      0 0 0 5px rgba(13, 148, 136, 0.13),
+      0 16px 28px rgba(13, 148, 136, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .timer-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid rgba(13, 148, 136, 0.14);
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(236, 254, 255, 0.92), rgba(255, 247, 237, 0.86));
+  }
+
+  .timer-copy strong,
+  .timer-copy span {
+    display: block;
+  }
+
+  .timer-copy strong {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .timer-copy span {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .timer-circle {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background:
+      conic-gradient(var(--primary) 360deg, rgba(13, 148, 136, 0.12) 0deg);
+    animation: countdown 60s linear forwards;
+    position: relative;
+  }
+
+  .timer-circle::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: inherit;
+    background: #ffffff;
+  }
+
+  .timer-circle span {
+    position: relative;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary-dark);
+  }
+
+  .primary-btn,
+  .resend-btn {
+    width: 100%;
+    min-height: 54px;
+    border: 0;
+    border-radius: 18px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 850;
+    cursor: pointer;
+    transition: 0.22s ease;
+  }
+
+  .primary-btn {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary), #0891b2);
+    box-shadow: 0 18px 34px rgba(13, 148, 136, 0.24);
+  }
+
+  .primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 42px rgba(13, 148, 136, 0.3);
+  }
+
+  .resend-wrap {
+    display: grid;
+    min-height: 48px;
+  }
+
+  .resend-btn {
+    grid-area: 1 / 1;
+    min-height: 48px;
+    border: 1px solid var(--line);
+    background: #ffffff;
+    color: var(--primary-dark);
+  }
+
+  .resend-btn.is-disabled {
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .resend-btn.is-ready {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .resend-btn.is-ready:hover {
+    border-color: rgba(13, 148, 136, 0.35);
+    background: var(--soft);
+  }
+
+  .helper-row {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .helper-row a {
+    color: var(--primary-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  @keyframes cardIn {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes countdown {
+    to {
+      background:
+        conic-gradient(var(--primary) 0deg, rgba(13, 148, 136, 0.12) 0deg);
+    }
+  }
+
+  @keyframes hideDisabled {
+    0%,
+    99% {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    100% {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes showReady {
+    0%,
+    99% {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+    }
+
+    100% {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .verify-card {
+      padding: 26px 18px;
+      border-radius: 26px;
+    }
+
+    .otp-grid {
+      gap: 7px;
+    }
+
+    .otp-input {
+      border-radius: 14px;
+    }
+
+    .timer-panel {
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<main class="verify-page">
+  <section class="verify-card" aria-labelledby="verify-title">
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 7.5 12 13l8-5.5" />
+        <path d="M5.5 6h13A2.5 2.5 0 0 1 21 8.5v7A2.5 2.5 0 0 1 18.5 18h-13A2.5 2.5 0 0 1 3 15.5v-7A2.5 2.5 0 0 1 5.5 6Z" />
+        <path d="m15.5 13.5 2.5 2.2" />
+        <path d="m8.5 13.5-2.5 2.2" />
+      </svg>
+    </div>
+
+    <header class="verify-header">
+      <span class="eyebrow">Email Verification</span>
+      <h1 id="verify-title">Enter OTP Code</h1>
+      <p class="subtitle">
+        We sent a 5-digit verification code to your email address. Enter it below to continue securely.
+      </p>
+      <span class="email-chip">your-email&#64;example.com</span>
+    </header>
+
+    <form class="otp-form"  [formGroup]="otpFrom">
+      <div class="otp-grid" aria-label="One time password">
+        <input class="otp-input" type="text"  formControlName="d1"  inputmode="numeric" maxlength="1" aria-label="OTP digit 1" />
+        <input class="otp-input" type="text"  formControlName="d2"  inputmode="numeric" maxlength="1" aria-label="OTP digit 2" />
+        <input class="otp-input" type="text"  formControlName="d3"  inputmode="numeric" maxlength="1" aria-label="OTP digit 3" />
+        <input class="otp-input" type="text"  formControlName="d4"  inputmode="numeric" maxlength="1" aria-label="OTP digit 4" />
+        <input class="otp-input" type="text"  formControlName="d5"  inputmode="numeric" maxlength="1" aria-label="OTP digit 5" />
+      </div>
+
+      <div class="timer-panel">
+        <div class="timer-copy">
+          <strong>
+            {{ secondsRemaining > 0 ? 'Resend available in ' + secondsRemaining + 's' : 'You can resend OTP now' }}
+          </strong>
+          <span>The resend button becomes active after the timer finishes.</span>
+        </div>
+        <div class="timer-circle" aria-hidden="true">
+          <span>{{ secondsRemaining }}s</span>
+        </div>
+      </div>
+
+      <button class="primary-btn" type="submit" (click)="verifyOTP()">Verify Email</button>
+
+      <div class="resend-wrap">
+        <button
+          class="resend-btn"
+          type="button"
+          [class.is-disabled]="secondsRemaining > 0"
+          [class.is-ready]="secondsRemaining === 0"
+          [disabled]="secondsRemaining > 0"
+      (click)="ResendOTP()"  >
+          {{ secondsRemaining > 0 ? 'Resend OTP in ' + secondsRemaining + ' seconds' : 'Resend OTP' }}
+        </button>
+      </div>
+
+      <p class="helper-row">
+        <span>Wrong email?</span>
+        <a href="#">Change email address</a>
+      </p>
+    </form>
+  </section>
+</main>

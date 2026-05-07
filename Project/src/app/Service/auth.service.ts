@@ -24,6 +24,22 @@ export class AuthService {
   };
     return this.http.post<any>(this.Url, payload);
 }
+  verifyOtp(data:string,user_Id:number):Observable<any>{
+    const payload = {
+    otpNumber:data , 
+    user_Id:user_Id,
+    process: 'verifyOtp'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
+  ResendOTP(user_Id:any):Observable<any>{
+    debugger
+    const payload = { 
+    user_Id:user_Id,
+    process: 'ResendOTP'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
  changePassword(data:any):Observable<any>{
     const payload = {
     ...data,  

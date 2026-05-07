@@ -28,12 +28,30 @@ export class CommonService {
   }, 300); // wait for animation
 }
 
+ getIsChanged():number | null  {
+    const getToken= this.getToken();
+    if(!getToken){
+          return null;
+    }
+    const decode:any = jwtDecode(getToken);
+    return decode.isChanged ?? null;
+  }
+ getIsEmail():number | null  {
+  debugger
+    const getToken= this.getToken();
+    if(!getToken){
+          return null;
+    }
+    const decode:any = jwtDecode(getToken);
+    return decode.isEmailVerified ?? null;
+  }
   getUserId(): number | null {
+    debugger
     const getToken= this.getToken();
     if(!getToken){
       return null;
     }
     const decode:any = jwtDecode(getToken);
-    return decode.$userId || null;
+    return decode.$userId ?? null;
   }
 }

@@ -4,20 +4,28 @@ import { ToastrService } from 'ngx-toastr';
 import { ProductService } from '../../Service/product.service';
 import { CategoryService } from '../../Service/category.service';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 import { UpdateProductRequest } from '../../Interface/updateProduct';
 import { CommonService } from '../../Service/common.service';
+import { UserService } from '../../Service/user.service';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-product',
-  imports: [ReactiveFormsModule,FormsModule,CommonModule],
+  imports: [ReactiveFormsModule,FormsModule,CommonModule,NgxPaginationModule],
   templateUrl: './product.component.html',
   styleUrl: './product.component.css'
 })
 export class ProductComponent {
   imagePreview: string | ArrayBuffer | null = null;
   isUploading = false;
+  loading = true;
+  
+   p: number = 1;
+   userResponseList:any=[];
+   role:string='';
 fileName: string = '';
  productForm! :FormGroup;
  SelectedFile: File | null = null;
@@ -29,12 +37,13 @@ fileName: string = '';
   updateProductRequest :UpdateProductRequest;
   isEdit : boolean = true;
   product_Id =0;
-  constructor(private _productService: ProductService, private _categoryService:CategoryService   ,private _fb: FormBuilder,private _toasterService:ToastrService,private _commonService:CommonService){
+  constructor(private userService:UserService ,private _productService: ProductService, private _categoryService:CategoryService   ,private _fb: FormBuilder,private _toasterService:ToastrService,private _commonService:CommonService){
 this.updateProductRequest= new UpdateProductRequest();
   }
   ngOnInit(): void {
     this.SetValidation();
     this.getAllProduct();
+    this.getUserDetails();
      this.getAllCategories();
   }
 
@@ -133,13 +142,25 @@ onFileSelected(event: any) {
   this.productForm.get('image')?.updateValueAndValidity();
 }
 
-
+getUserDetails(){
+  const userId = this._commonService.getUserId();
+ this.userService.getUser(userId!).subscribe({
+  next:(response:any)=>{
+   this.userResponseList=response[0];
+   this.role=this.userResponseList[0].role_name.trim();
+  },
+  error:(error:any)=>{
+    console.error('Error fetching user details:', error);
+  }
+ });
+}
 
 getAllProduct(){
 
-this._productService.getProduct().subscribe({
+this._productService.getBuyerProduct().subscribe({
   next:(response:any)=>{
-      debugger
+    this.loading = false;
+      // debugger
       this.productResponseList =response[0];
       this.searchResponseList=response[0];
       // Initialize tooltips after data is loaded
