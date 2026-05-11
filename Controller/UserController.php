@@ -6,6 +6,11 @@ class Controller extends Model
     public function simplifyLogic(array $input, $file = null){
       $process= $input['process'];
       switch ($process){
+
+      case 'ResendOTP':
+           $data = $this->ResendOTP($input);
+          return json_encode($data);
+          break;
          case 'registerUser':
           $data = $this->registerUser($input);
           return json_encode($data);
@@ -58,6 +63,10 @@ class Controller extends Model
           $data = $this->updateRole($input);
           return json_encode($data);
           break;
+           case 'getBuyerProduct':
+            $data=$this->getBuyerProduct($input);
+            return json_encode($data);
+            break;
            case 'updateUser':
           $data = $this->updateUser($input);
           return json_encode($data);
@@ -66,6 +75,10 @@ class Controller extends Model
         $data = $this->getAllCategory($input);
         return json_encode($data);
         break;
+        case 'verifyOtp':
+         $data= $this->verifyOtp($input);
+         return json_encode($data);
+         break;
           case 'getAllUser':  
         $data = $this->getAllUser($input);
         return json_encode($data);

@@ -14,17 +14,19 @@ public function decodeJwt($token){
     $decodeToken = JWT::decode($token, new Key( $this->secretkey, 'HS256'));
     return array($decodeToken);
 }
-  public function generateaccessToken($userId,$expiry=3600): string
+  public function generateaccessToken($userId,$IsChanged,$IsEmailVerified,$expiry=3600): string
     {
         $issuedAt = time();
         $payload['iat'] = $issuedAt;
         $payload['exp'] = $issuedAt + $expiry;
          $payload['$userId'] = $userId;
+         $payload['isChanged'] = $IsChanged;
+         $payload['isEmailVerified']= $IsEmailVerified;
         return JWT::encode($payload, $this->secretkey, 'HS256');
     }
      public function generaterefreshToken(array $permissions  = [],$userId,$expiry=(7*24*60*60)): string
     {
-        $issuedAt = time();
+        $issuedAt = time();     
         $payload['iat'] = $issuedAt;
         $payload['exp'] = $issuedAt + $expiry;
         $payload['permissions'] = $permissions;

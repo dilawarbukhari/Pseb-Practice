@@ -7,6 +7,26 @@ public function checkCondition($input){
     // die;
     $process=$input['process'];
     switch($process){
+        case 'generateSaleReport':
+          $data=$this->generateSaleReport();
+            return json_encode($data);
+            break;  
+        case 'getReviewStatus':
+              $data=$this->getReviewStatus($input);
+            return json_encode($data);
+            break;
+        case 'Feedback':
+            $data=$this->Feedback($input);
+            return json_encode($data);
+            break;    
+        case 'trackOrder':
+           $data=$this->trackOrder($input);
+            return json_encode($data);
+            break;  
+          case 'Totalrecord':
+             $data=$this->Totalrecord();
+            return json_encode($data);
+            break;
         case 'cancelOrder':
             $data=$this->cancelOrder($input);
             return json_encode($data);

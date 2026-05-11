@@ -3,10 +3,13 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/MVC/vendor/autoload.php';
 
 class Config
-{
+{ 
+
+
     private function getMailer()
     {
         $mail = new PHPMailer(true);
@@ -16,7 +19,7 @@ class Config
         $mail->Host       = 'smtp.gmail.com';         // Real SMTP server
         $mail->SMTPAuth   = true;                     // Authentication required
         $mail->Username   = 'csab7987@gmail.com';   // Your real email
-        $mail->Password   = 'chhx dczx lrwp gebz';      // Your Google App Password
+        $mail->Password   = 'ueeg mgkz ucwm jnem';      // Your Google App Password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;                      // Standard TLS port
 
@@ -25,7 +28,7 @@ class Config
         return $mail;
     }
 
-    public function sendOrderConfirmation($input, $email, $order_number)
+    public function sendOrderConfirmation($input, $email, $order_number,$trackingNumber)
 {
     try {
         $mail = $this->getMailer();
@@ -50,7 +53,9 @@ class Config
 
             <div style="background:#f7f7f7; padding:15px; border-radius:5px;">
                 <p><strong>Order Number:</strong> #' . $order_number . '</p>
+                     <p><strong>Tracking Number:</strong>' . $trackingNumber . '</p>
                 <p><strong>Order Date:</strong> ' . date('F j, Y, g:i a') . '</p>
+            
 <p><strong>Payment Method:</strong> ' . ucwords(str_replace('_', ' ', "Credit Card")) . '</p>
             </div>
 
@@ -107,7 +112,7 @@ class Config
     }
 }
 
-public function sendOrderStatusUpdate($email, $order_number, $status)
+public function sendOrderStatusUpdate($email, $order_number, $status, $orderId)
 {
     try {
         $mail = $this->getMailer();
@@ -119,9 +124,9 @@ public function sendOrderStatusUpdate($email, $order_number, $status)
 
         // Status message
         $message = '';
-        if ($status === 'shipped') {
+        if ($status === 'Shipped') {
             $message = 'Your order has been shipped and is on the way 🚚';
-        } elseif ($status === 'delivered') {
+        } elseif ($status === 'Delivered') {
             $message = 'Your order has been delivered successfully 🎉';
         } else {
             $message = 'Your order status has been updated.';
@@ -143,16 +148,39 @@ public function sendOrderStatusUpdate($email, $order_number, $status)
             </div>';
 
         // Extra UI for delivered
-        if ($status === 'delivered') {
-            $body .= '
-            <p style="margin-top:20px;">
-                We hope you enjoy your purchase ❤️ <br>
-                Thank you for shopping with <strong>Bukhari Mart</strong>.
-            </p>';
+        if ($status === 'Delivered') {
+           $feedbackUrl =  'http://localhost:4200/feedback/' . $orderId;
+
+    $body .= '
+    <p style="margin-top:20px;">
+        We hope you enjoy your purchase ❤️ <br>
+        Thank you for shopping with <strong>Bukhari Mart</strong>.
+    </p>
+
+    <!-- ⭐ Feedback Section -->
+    <div style="margin-top:25px; padding:20px; background:#fff8e1; border:1px solid #ffe0b2; border-radius:8px; text-align:center;">
+        
+        <h3 style="margin-bottom:10px;">⭐ How was your experience?</h3>
+        <p style="font-size:14px; color:#555;">Your feedback helps us improve our service</p>
+
+        <!-- Quick Rating -->
+        <div style="margin:15px 0;">
+            <a href="'.$feedbackUrl.'&rating=5" style="text-decoration:none; font-size:22px;">
+                ⭐⭐⭐⭐⭐
+            </a>
+        </div>
+
+        <!-- Review Button -->
+        <a href="'.$feedbackUrl.'" 
+           style="display:inline-block; margin-top:10px; padding:10px 20px; background:#28a745; color:#fff; text-decoration:none; border-radius:5px;">
+           Write a Review
+        </a>
+
+    </div>';
         }
 
         // Extra UI for shipped
-        if ($status === 'shipped') {
+        if ($status === 'Shipped') {
             $body .= '
             <p style="margin-top:20px;">
                 Your package is on the way. Please keep your phone available for delivery 📦
@@ -173,6 +201,49 @@ public function sendOrderStatusUpdate($email, $order_number, $status)
         return false;
     }
 }
+
+
+public function sendOTP($email, $otp)
+    {
+        try {
+            $mail = $this->getMailer();
+            $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = 'Your Verification Code';
+
+$mail->Body = "
+<div style='font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;'>
+    <div style='max-width: 500px; margin: auto; background: #ffffff; border-radius: 10px; padding: 30px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+        
+        <h2 style='color: #333;'>Verification Code</h2>
+        
+        <p style='color: #555; font-size: 16px;'>
+            Use the following One-Time Password (OTP) to complete your verification:
+        </p>
+        
+        <div style='font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #2c7be5; margin: 20px 0;'>
+            $otp
+        </div>
+        
+        <p style='color: #888; font-size: 14px;'>
+            This code will expire in <b>15 minutes</b>.
+        </p>
+
+        <hr style='margin: 20px 0;'>
+
+        <p style='font-size: 12px; color: #aaa;'>
+            If you did not request this code, please ignore this email.
+        </p>
+    </div>
+</div>
+";
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Email failed: " . $mail->ErrorInfo);
+            return false;
+        }
+    }
 public function sendemail($email, $password)
 {
     try {
