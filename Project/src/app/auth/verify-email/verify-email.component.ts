@@ -69,10 +69,7 @@ if(!this.otpFrom.invalid){
       }
     })
     }
-      
       }
-
-
  ResendOTP(){
   debugger
    this.user_Id = Number(localStorage.getItem('user_Id'));

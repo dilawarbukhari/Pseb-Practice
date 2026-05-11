@@ -1,0 +1,400 @@
+.invoice-management {
+  min-height: 100vh;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #1a202c;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.report-header,
+.filter-panel,
+.history-panel,
+.report-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+  margin-bottom: 22px;
+  border-left: 5px solid #667eea;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.report-header h1,
+.filter-title h2,
+.panel-header h2,
+.report-content h2 {
+  margin: 0;
+  color: #1a202c;
+  font-weight: 800;
+}
+
+.report-header h1 {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+.report-header p,
+.filter-title p,
+.panel-header p,
+.report-content p {
+  margin: 0;
+  color: #718096;
+  line-height: 1.55;
+}
+
+.refresh-btn,
+.export-btn,
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.refresh-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  background: #1a202c;
+  color: #ffffff;
+}
+
+.refresh-btn:hover,
+.export-btn:hover,
+.download-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(26, 32, 44, 0.12);
+}
+
+.filter-panel {
+  padding: 22px;
+  margin-bottom: 22px;
+}
+
+.filter-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.filter-title i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 20px;
+}
+
+.filter-title h2,
+.panel-header h2 {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span {
+  color: #718096;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.search-box input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1a202c;
+  outline: 0;
+}
+
+.field input,
+.field select {
+  padding: 0 12px;
+}
+
+.field input:focus,
+.field select:focus,
+.search-box:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.14);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.report-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  border-left: 4px solid #e2e8f0;
+}
+
+.report-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  font-size: 24px;
+}
+
+.report-kicker {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.report-content h2 {
+  margin-bottom: 6px;
+  font-size: 18px;
+}
+
+.report-content p {
+  font-size: 13px;
+}
+
+.export-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.daily-report {
+  border-left-color: #3b82f6;
+}
+
+.daily-report .report-icon,
+.daily-report .export-btn {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.weekly-report {
+  border-left-color: #10b981;
+}
+
+.weekly-report .report-icon,
+.weekly-report .export-btn {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.monthly-report {
+  border-left-color: #f59e0b;
+}
+
+.monthly-report .report-icon,
+.monthly-report .export-btn {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.yearly-report {
+  border-left-color: #8b5cf6;
+}
+
+.yearly-report .report-icon,
+.yearly-report .export-btn {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+
+.history-panel {
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.search-box input {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.report-table {
+  overflow-x: auto;
+}
+
+.table-head,
+.table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 100px 100px 110px;
+  align-items: center;
+  gap: 14px;
+  min-width: 760px;
+  padding: 16px 24px;
+}
+
+.table-head {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.table-row {
+  border-top: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 14px;
+}
+
+.muted-row {
+  background: #fcfdff;
+}
+
+.type-name {
+  color: #1a202c;
+  font-weight: 800;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status.ready {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.download-link {
+  min-height: 34px;
+  padding: 0 12px;
+  background: #edf2f7;
+  color: #334155;
+}
+
+@media (max-width: 1100px) {
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .invoice-management {
+    padding: 16px;
+  }
+
+  .report-header,
+  .panel-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .report-header h1 {
+    font-size: 26px;
+  }
+
+  .filter-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .report-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .export-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoice-management {
+    padding: 12px;
+  }
+
+  .report-header,
+  .filter-panel,
+  .report-card,
+  .panel-header {
+    padding: 16px;
+  }
+}

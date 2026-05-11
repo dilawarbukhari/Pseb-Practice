@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TrackorderService {
+export class SharedService {
 Url = 'http://localhost/MVC/route.php';
   constructor(private _http : HttpClient) { 
   }
@@ -16,5 +16,17 @@ trackingNumber: TrackingNumber,
  process: 'trackOrder'
  }
 return this._http.post<any>(this.Url,payload);
+}
+Feedback(data:any):Observable<any>{
+return this._http.post<any>(this.Url,data);
+}
+getReviewStatus(data:any):Observable<any>{
+return this._http.post<any>(this.Url,data);
+}
+generateSaleReport():Observable<any>{
+  const data={
+    process : 'generateSaleReport'
+  }
+return this._http.post<any>(this.Url,data);
 }
 }
