@@ -29,6 +29,38 @@ $process= $input['process'];
 $controller = new Controller();
 $client = new clientController();
 switch ($process) {
+  case 'generateSaleReport':
+         $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getReviewStatus':
+        $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'Feedback':
+      $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'ResendOTP':
+     $response= $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'verifyOtp':
+    $response= $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'Totalrecord':
+   $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'getBuyerProduct':
+    $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+    case 'trackOrder':
+       $response = $client->checkCondition($input);
+    echo $response;
+    break;  
 case 'cancelOrder':
     $response = $client->checkCondition($input);
     echo $response;

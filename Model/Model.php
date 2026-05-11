@@ -458,6 +458,32 @@ class Model extends db
         $User[] = $result->fetch_all(MYSQLI_ASSOC);
         return $User;
     }
+
+    public function getBuyerProduct($input)
+    {
+        if (!$this->checkToken($this-> getBearerToken())) {
+            return [['message' => 'Please login again'],  ["status" => "400"]];
+        }
+        $userId = $this->getUserId($this-> getBearerToken());
+        // if (!$this->hasPermission($userId, "view_product")) {
+        //     return [
+        //         ["message" => "you have no permission to do the process"],
+        //         ["status" => "400"]
+        //     ];
+        // }
+        $sql = 'Select ps.product_Id,ps.user_Id,p.description,P.image, p.product_name,p.category_id,c.category_name,p.price,p.oldPrice,p.quantity from product_users ps Join products p On p.product_Id= ps.product_Id Join categories c On c.category_id = p.category_id where ps.user_Id=? And ps.isDeleted = false AND p.isDeleted !=true AND c.isDeleted != true;';
+
+        $query = $this->conn->prepare($sql);
+        $query->bind_param("i", $userId);
+        $query->execute();
+        $result = $query->get_result();
+
+        if (!$result->num_rows > 0) {
+            return ["message " => 'No rows effected'];
+        }
+        $User[] = $result->fetch_all(MYSQLI_ASSOC);
+        return $User;
+    }
     public function deleteCategory($input)
     {
         if (!$this->checkToken($this-> getBearerToken())) {
@@ -668,14 +694,15 @@ public function addProduct($input, $file = null)
 
 
     $sql = "INSERT INTO products 
-            (product_name, Image,image_Id, category_id, price, oldPrice, quantity,Description, created_by, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
+            (product_name,seller_Id, Image,image_Id, category_id, price, oldPrice, quantity,Description, created_by, created_at) 
+            VALUES (?,?, ?, ?, ?, ?, ?, ?,?,?,?)";
 
     $query = $this->conn->prepare($sql);
 
     $query->bind_param(
-        'sssiiiisis',
+        'sissiiiisis',
         $name,
+        $userId,
         $imagePath,
         $imagePublicId,
         $categoryid,
@@ -695,6 +722,16 @@ public function addProduct($input, $file = null)
             ["status" => "400"]
         ];
     }
+    $productId = $this->conn->insert_id;
+    $sql2 = "INSERT INTO product_users (product_Id, user_Id,created_at,created_by) VALUES (?, ?,?,?)";
+        $query2 = $this->conn->prepare($sql2);
+
+        $query2->bind_param('iisi', $productId, $userId, $created_at, $userId);
+        $query2->execute();
+
+        if ($query2->affected_rows <= 0) {
+            throw new Exception("Product user mapping failed");
+        }
 
     return [
         [
@@ -731,7 +768,10 @@ public function addProduct($input, $file = null)
     }
  
     $row = $result->fetch_assoc();
+
     $IsChanged = $row['isChanged'];
+    $IsEmailVerified= $row['IsEmailVerified'];
+
  $IsTerminated = $row['IsTerminated'];
  
  if($IsTerminated !== 0){
@@ -765,6 +805,7 @@ public function addProduct($input, $file = null)
     $hashpassword = $row['Password'];
     $userId = $row['Id'];
 
+
     if (!password_verify($password, $hashpassword)) {
         return [
             ['message' => "Please enter the correct password"],
@@ -772,7 +813,7 @@ public function addProduct($input, $file = null)
         ];
     }
 
-    $accessToken = $this->_Jwt->generateaccessToken($userId);
+    $accessToken = $this->_Jwt->generateaccessToken($userId,$IsChanged, $IsEmailVerified);
 
     $lastLogin = date('Y-m-d H:i:s');
     $sql = "UPDATE signup SET last_login = ? WHERE email = ?";
@@ -785,11 +826,50 @@ public function addProduct($input, $file = null)
         ['status' => '200'],
         [
             'data' => [
-                ['accessToken' => $accessToken],
-                ['isChanged' => $IsChanged]
+                ['accessToken' => $accessToken]
+                // ['isChanged' => $IsChanged]
             ]
         ]
     ];
+}
+
+public function ResendOTP($input){
+ $user_Id= $input['user_Id'];
+ $otp = rand(10000,99999);
+ $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));  
+$sql = "Update user_otps Set otp=? ,expiry=?  where user_Id= ? ";
+$query= $this->conn->prepare($sql);
+$query->bind_param('ssi',$otp,$expiry,$user_Id);
+$query->execute();
+if($query->affected_rows>0){
+
+$get= $this->getEmail($user_Id);
+$email= $get['email'];
+
+
+$this->emailServer->sendOTP($email,$otp); 
+ return [
+        ['message' => 'OTP has been resend on your email address'],
+        ['status' => '200'],
+ ];
+}
+$sql= 'Insert into user_otps (user_Id, otp,expiry) Values (?,?,?)';
+$query= $this->conn->prepare($sql);
+$query->bind_param('iss', $user_Id,$otp,$expiry);
+$query->execute();
+if($query->affected_rows==0){
+    return [
+        ['message' => 'Error in OTP generation'],
+        ['status' => '200'],
+ ];
+}
+$get= $this->getEmail($user_Id);
+$email= $get['email'];
+$this->emailServer->sendOTP($email,$otp); 
+ return [
+        ['message' => 'OTP has been sent on your email address'],
+        ['status' => '200'],
+ ];
 }
     public function changePassword($input)
     {    
@@ -950,16 +1030,33 @@ public function addProduct($input, $file = null)
             $query = $this->conn->prepare($sql);
             $query->bind_param("ssssiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $created_by, $created_at, $isChanged);
             $query->execute();
-            if (!$query->affected_rows > 0) {
-                return [
-                    ['message' => 'Data not added successfully'],
-                    ['status' => '400']
-                ];
+            if ($query->affected_rows > 0) {
+                  $otp = rand(10000,99999);   
+                $userId= $this->conn->insert_id;
+
+            //   echo $_SESSION['user_Id'] . " is your user Id";
+            //   die;
+               
+                $created_at = date('Y-m-d H:i:s', time());
+                $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));    
+                $sql= 'Insert into user_otps (user_Id,otp,expiry) Values (?,?,?)';
+                $query= $this->conn->prepare($sql);
+                $query->bind_param('iss', $userId,$otp,$expiry);
+                $query->execute();
+                if($query->affected_rows>0){
+                    $this->emailServer->sendOTP($email,$otp);
+                      return [
+                ['message' => 'Data has been added successfully and verification email sent'],
+                ['status' => '200'],
+                ['user_Id'=> $userId],
+            ];
+                }
             }
-              return [
-                ['message' => 'Data has been added successfully'],
+             return [
+                ['message' => 'Data not been added successfully'],
                 ['status' => '200']
             ];
+            
                 }
 
          if (
@@ -980,23 +1077,92 @@ public function addProduct($input, $file = null)
             $query = $this->conn->prepare($sql);
             $query->bind_param("ssssisissiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $businessName, $cnic, $bankAccount, $shopAddress, $taxId, $created_by, $created_at, $isChanged);
             $query->execute();
-            if (!$query->affected_rows > 0) {
-                return [
-                    ['message' => 'Data not added successfully'],
-                    ['status' => '400']
-                ];
-            }
-              
+            if ($query->affected_rows > 0) {                    
+                $otp = rand(10000,99999);
+                // echo $otp;
+                // die;    
+                $userId= $this->conn->insert_id;
+                 
+                if (session_status() === PHP_SESSION_NONE){
+                session_start();
+                $_SESSION['user_Id']= $userId;    
+                
+
+                // var_dump($_SESSION);
+                // die;
+                }
+                $created_at = date('Y-m-d H:i:s', time());
+                $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));
+                $this->emailServer->sendOTP($email,$otp);
+                $sql= 'Insert into user_otps (user_Id,otp,expiry) Values (?,?,?)';
+                $query= $this->conn->prepare($sql);
+                $query->bind_param('iss', $userId,$otp,$expiry);
+                $query->execute();
+ 
+                if($query->affected_rows> 0){
               return [
-                ['message' => 'Data has been added successfully'],
-                ['status' => '200']
+                ['message' => 'Data has been added successfully and verification Email sent'],
+                ['status' => '200'],
+                 ['user_Id'=> $userId]
             ];
-            
+               
+
+            }
         }
-    
+            return [
+                ['message' => 'Data not  added successfully'],   
+                ['status' => '200'],
+               
+            ];
+  
+    }
         return [['message' => 'All Fields are required'], ['status' => '400']];
+    
     }
     
+public function verifyOtp($input){
+
+    $otp = $input['otpNumber'];
+    $user_Id = $input['user_Id'];
+    $sql = "SELECT * FROM user_otps WHERE user_Id = ? AND otp = ?";
+    $query = $this->conn->prepare($sql);
+    $query->bind_param('is', $user_Id, $otp);
+    $query->execute();
+
+    $result = $query->get_result();
+    if ($result->num_rows == 0) {
+        return [
+            ['message' => 'Please enter the correct OTP'],
+            ['status' => '400']
+        ];
+    }
+    $row = $result->fetch_assoc();
+    $expirytoken = new DateTime($row['expiry']);
+    $currentTime = new DateTime();
+
+    if ($currentTime > $expirytoken) {
+        return [
+            ['message' => 'Your OTP has expired. Please request a new one.'],
+           [ 'status' => '400']
+        ];
+    }
+    $sql = 'UPDATE signup SET isEmailVerified = true WHERE Id = ?';
+    $query = $this->conn->prepare($sql);
+    $query->bind_param('i', $user_Id);
+    $query->execute();
+
+    if ($query->affected_rows > 0) {
+        return [
+            ['message' => 'Email has been verified'],
+           [ 'status' => '200']
+        ];
+    } else {
+        return [
+            ['message' => 'Verification failed or already verified'],
+            ['status' => '400']
+        ];
+    }
+}
     public function addUser($input)
     {
         if (!$this->checkToken($this-> getBearerToken())) {
@@ -1282,6 +1448,8 @@ public function updateProduct($input)
         }
         return false;
     }
+
+
     private function generateTempPassword($length = 10)
     {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
@@ -1290,6 +1458,15 @@ public function updateProduct($input)
             $password .= $chars[random_int(0, strlen($chars) - 1)];
         }
         return $password;
+    }
+private function getEmail($user_Id){
+ $sql= "Select email from signup where Id = ? ";
+$query= $this->conn->prepare($sql);
+$query->bind_param('i', $user_Id);
+$result=$query->execute();
+$result=$query->get_result();
+$row= $result->fetch_assoc();
+ return $row;
     }
     private function getBearerToken()
 {
