@@ -16,6 +16,11 @@ import { UserproductComponent } from './pages/userproduct/userproduct.component'
 
 import { OrderComponent } from './pages/orders/order.component';
 import { OrdermanagementComponent } from './pages/ordermanagement/ordermanagement.component';
+import { OrderdetailComponent } from './pages/orderdetail/orderdetail.component';
+import { ProductdetailComponent } from './pages/productdetail/productdetail.component';
+import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
+import { TrackorderComponent } from './pages/trackorder/trackorder.component';
+
 
 
 export const routes: Routes = [
@@ -23,6 +28,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgotpassword', component: ForgetpasswordComponent },
   { path: 'register', component: RegisterComponent },
+   {path:'verify-email',component:VerifyEmailComponent},
   { path: '', component: LoginComponent },
 
   {
@@ -34,9 +40,12 @@ export const routes: Routes = [
       { path: 'user', component: UsermanagementComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'category', component: CategoryComponent },
+      {path:'productadmin',component:ProductdetailComponent},
       { path: 'product', component: ProductComponent },
       { path: 'userproduct', component: UserproductComponent },
       { path: 'myorders', component: OrderComponent },
+     { path:'trackorder', component:TrackorderComponent},
+     { path: 'ordermanagementadmin', component: OrderdetailComponent },
        { path: 'ordermanagement', component: OrdermanagementComponent },
       { path: 'settings', component: SettingComponent },
       { path: 'rolepermission', component: RolepermissionComponent },

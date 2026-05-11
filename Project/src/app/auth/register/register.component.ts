@@ -106,7 +106,8 @@ onRegister(){
         debugger
         if(response[1].status == "200"){
            this._toastr.success(response[0].message, 'success'); 
-      this._route.navigateByUrl("/login");
+           localStorage.setItem('user_Id',response[2].user_Id);
+      this._route.navigateByUrl("/verify-email");
       }
       this._toastr.error(response[0].message, 'Warning');
       },

@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { UpdateCategoryRequest } from '../../Interface/updateCategory';
 import { elementAt } from 'rxjs';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { CommonService } from '../../Service/common.service';
 
 
 @Component({
   selector: 'app-category',
-  imports: [ReactiveFormsModule,CommonModule,FormsModule],
+  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -19,6 +20,7 @@ export class CategoryComponent implements OnInit {
   categoryResponseList:any =[];
   searchResponseList:any=[];
   searchText :string = '';
+   p: number = 1;
 
   updateCategoryRequest :UpdateCategoryRequest;
   isEdit : boolean = true;

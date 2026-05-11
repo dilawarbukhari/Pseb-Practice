@@ -1,0 +1,614 @@
+<div class="order-detail-dashboard">
+  <style>
+    .order-detail-dashboard {
+      --ink: #18212f;
+      --muted: #728096;
+      --paper: rgba(255, 255, 255, 0.9);
+      --line: rgba(24, 33, 47, 0.1);
+      --pending: #f59e0b;
+      --shipped: #2563eb;
+      --delivered: #16a34a;
+      --accent: #0f766e;
+      --shadow: 0 24px 70px rgba(19, 31, 49, 0.13);
+      min-height: 100vh;
+      padding: 30px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(15, 118, 110, 0.18), transparent 28%),
+        radial-gradient(circle at 92% 2%, rgba(245, 158, 11, 0.17), transparent 26%),
+        linear-gradient(135deg, #f8fbf8 0%, #eef6f4 48%, #fff7e7 100%);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .analytics-shell {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    .hero-panel,
+    .metric-card,
+    .chart-panel,
+    .orders-panel,
+    .empty-panel {
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      padding: 34px;
+    }
+
+    .hero-panel::after {
+      content: '';
+      position: absolute;
+      right: -70px;
+      top: -90px;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(15, 118, 110, 0.18), rgba(245, 158, 11, 0.14));
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: #0f766e;
+      background: rgba(15, 118, 110, 0.11);
+      font: 700 0.78rem/1.1 Verdana, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .page-title {
+      max-width: 760px;
+      margin: 18px 0 12px;
+      font-size: clamp(2.1rem, 4vw, 4.6rem);
+      line-height: 0.96;
+      letter-spacing: -0.065em;
+      font-weight: 800;
+    }
+
+    .page-subtitle {
+      max-width: 660px;
+      margin: 0;
+      color: var(--muted);
+      font: 500 1rem/1.7 Verdana, sans-serif;
+    }
+
+    .hero-total {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      padding: 22px 24px;
+      border-radius: 28px;
+      background: #162131;
+      color: #fff;
+      min-width: 190px;
+    }
+
+    .hero-total span {
+      color: rgba(255, 255, 255, 0.68);
+      font: 700 0.78rem/1 Verdana, sans-serif;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .hero-total strong {
+      font-size: 3.6rem;
+      line-height: 1;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    .metric-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 24px;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      inset: auto -25px -45px auto;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      opacity: 0.13;
+      background: currentColor;
+    }
+
+    .metric-card.pending { color: var(--pending); }
+    .metric-card.shipped { color: var(--shipped); }
+    .metric-card.delivered { color: var(--delivered); }
+
+    .metric-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: currentColor;
+      color: #fff;
+      box-shadow: 0 14px 24px rgba(24, 33, 47, 0.12);
+    }
+
+    .metric-label {
+      display: block;
+      margin-top: 18px;
+      color: var(--muted);
+      font: 700 0.78rem/1 Verdana, sans-serif;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      margin: 8px 0 14px;
+      color: var(--ink);
+      font-size: 2.8rem;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+
+    .mini-track {
+      overflow: hidden;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(24, 33, 47, 0.08);
+    }
+
+    .mini-fill {
+      height: 100%;
+      min-width: 6px;
+      border-radius: inherit;
+      background: currentColor;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+
+    .chart-panel,
+    .orders-panel,
+    .empty-panel {
+      border-radius: 32px;
+      padding: 28px;
+    }
+
+    .section-kicker {
+      color: var(--accent);
+      font: 800 0.78rem/1 Verdana, sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 8px 0 4px;
+      color: var(--ink);
+      font-size: 1.75rem;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      font-weight: 800;
+    }
+
+    .section-copy {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font: 500 0.95rem/1.6 Verdana, sans-serif;
+    }
+
+    .donut-wrap {
+      display: grid;
+      place-items: center;
+      margin: 22px 0;
+    }
+
+    .donut-chart {
+      display: grid;
+      place-items: center;
+      width: min(290px, 74vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(24, 33, 47, 0.08), 0 22px 45px rgba(24, 33, 47, 0.12);
+    }
+
+    .donut-center {
+      display: grid;
+      place-items: center;
+      width: 58%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(24, 33, 47, 0.08);
+      text-align: center;
+    }
+
+    .donut-center strong {
+      display: block;
+      font-size: 2.25rem;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .donut-center span {
+      color: var(--muted);
+      font: 700 0.72rem/1.2 Verdana, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      font: 700 0.9rem/1.2 Verdana, sans-serif;
+    }
+
+    .legend-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--dot);
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .bar-item {
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font: 700 0.9rem/1.2 Verdana, sans-serif;
+    }
+
+    .bar-track {
+      overflow: hidden;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(24, 33, 47, 0.08);
+    }
+
+    .bar-fill {
+      height: 100%;
+      min-width: 8px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--bar), rgba(255, 255, 255, 0.32));
+    }
+
+    .orders-panel {
+      overflow: hidden;
+    }
+
+    .orders-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      width: min(360px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--ink);
+      font: 600 0.9rem Verdana, sans-serif;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: rgba(15, 118, 110, 0.5);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+    }
+
+    .admin-table {
+      width: 100%;
+      min-width: 850px;
+      border-collapse: collapse;
+      font-family: Verdana, sans-serif;
+    }
+
+    .admin-table th {
+      padding: 16px;
+      color: var(--muted);
+      background: #f7faf9;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .admin-table td {
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .product-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #edf3f1;
+    }
+
+    .product-name {
+      display: block;
+      font-weight: 800;
+    }
+
+    .product-category {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.1);
+      color: #0f766e;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .empty-panel {
+      text-align: center;
+    }
+
+    .empty-icon {
+      display: grid;
+      place-items: center;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      border-radius: 22px;
+      background: rgba(15, 118, 110, 0.1);
+      color: var(--accent);
+      font-size: 2rem;
+    }
+
+    @media (max-width: 991px) {
+      .order-detail-dashboard { padding: 18px; }
+      .hero-panel { padding: 24px; }
+      .hero-total { align-items: flex-start; margin-top: 22px; }
+      .metric-grid,
+      .chart-grid { grid-template-columns: 1fr; }
+      .orders-head { align-items: stretch; flex-direction: column; }
+    }
+  </style>
+
+  <div class="analytics-shell">
+    <section class="hero-panel mb-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <span class="eyebrow"><i class="bi bi-activity"></i> Admin Order Intelligence</span>
+          <h1 class="page-title">Order Detail Command Center</h1>
+          <p class="page-subtitle">
+            A clean admin-first view for monitoring order movement, fulfillment pressure, and delivery performance in one place.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <div class="hero-total ms-lg-auto">
+            <span>Total Orders</span>
+            <strong>{{  totalOrders}}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      <article class="metric-card pending">
+        <div class="metric-icon"><i class="bi bi-hourglass-split"></i></div>
+        <span class="metric-label">Pending Orders</span>
+        <h2 class="metric-value">{{ PendingOrder }}</h2>
+        <div class="mini-track">
+          <div class="mini-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (PendingOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+        </div>
+      </article>
+
+      <article class="metric-card shipped">
+        <div class="metric-icon"><i class="bi bi-truck"></i></div>
+        <span class="metric-label">Shipped Orders</span>
+        <h2 class="metric-value">{{ ShippedOrder }}</h2>
+        <div class="mini-track">
+          <div class="mini-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (ShippedOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+        </div>
+      </article>
+
+      <article class="metric-card delivered">
+        <div class="metric-icon"><i class="bi bi-box-seam"></i></div>
+        <span class="metric-label">Delivered Orders</span>
+        <h2 class="metric-value">{{ DeliveredOrder }}</h2>
+        <div class="mini-track">
+          <div class="mini-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (DeliveredOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="chart-grid">
+      <article class="chart-panel">
+        <span class="section-kicker">Status Split</span>
+        <h2 class="section-title">Fulfillment Mix</h2>
+        <p class="section-copy">Donut graph showing how current orders are distributed across the admin workflow.</p>
+
+        <div class="donut-wrap">
+          <div
+            class="donut-chart"
+            [style.background]="'conic-gradient(#f59e0b 0% ' + ((PendingOrder + ShippedOrder + DeliveredOrder) ? (PendingOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0) + '%, #2563eb ' + ((PendingOrder + ShippedOrder + DeliveredOrder) ? (PendingOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0) + '% ' + ((PendingOrder + ShippedOrder + DeliveredOrder) ? ((PendingOrder + ShippedOrder) * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0) + '%, #16a34a ' + ((PendingOrder + ShippedOrder + DeliveredOrder) ? ((PendingOrder + ShippedOrder) * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0) + '% 100%)'">
+            <div class="donut-center">
+              <div>
+                <strong>{{totalOrders}}</strong>
+                <span>Orders</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-row">
+          <span class="legend-name"><i class="legend-dot" style="--dot:#f59e0b"></i>Pending</span>
+          <span>{{ PendingOrder }}</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-name"><i class="legend-dot" style="--dot:#2563eb"></i>Shipped</span>
+          <span>{{ ShippedOrder }}</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-name"><i class="legend-dot" style="--dot:#16a34a"></i>Delivered</span>
+          <span>{{ DeliveredOrder }}</span>
+        </div>
+      </article>
+
+      <article class="chart-panel">
+        <span class="section-kicker">Admin Perspective</span>
+        <h2 class="section-title">Operational Load</h2>
+        <p class="section-copy">Horizontal bars make it easy to spot where the fulfillment team should focus first.</p>
+
+        <div class="bar-list">
+          <div class="bar-item" style="--bar:#f59e0b">
+            <div class="bar-meta"><span>Pending queue</span><strong>{{ PendingOrder }}</strong></div>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (PendingOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+            </div>
+          </div>
+
+          <div class="bar-item" style="--bar:#2563eb">
+            <div class="bar-meta"><span>In shipment</span><strong>{{ ShippedOrder }}</strong></div>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (ShippedOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+            </div>
+          </div>
+
+          <div class="bar-item" style="--bar:#16a34a">
+            <div class="bar-meta"><span>Completed delivery</span><strong>{{ DeliveredOrder }}</strong></div>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="(PendingOrder + ShippedOrder + DeliveredOrder) ? (DeliveredOrder * 100 / (PendingOrder + ShippedOrder + DeliveredOrder)) : 0"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="orders-panel" *ngIf="filteredProductResponseList?.length > 0; else noOrdersAvailable">
+      <div class="orders-head">
+        <div>
+          <span class="section-kicker">Order Records</span>
+          <h2 class="section-title">All Order Details</h2>
+        </div>
+        <input
+          type="text"
+          class="search-box"
+          placeholder="Search order, product, category, user or status"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()">
+      </div>
+
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Product</th>
+              <th>User</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of filteredProductResponseList">
+              <td><strong>#{{ order?.order_number || order?.order_Id || 'N/A' }}</strong></td>
+              <td>
+                <div class="product-cell">
+                  <img class="product-thumb" [src]="order?.Image || 'https://via.placeholder.com/120x120?text=Order'" [alt]="order?.product_name || 'Order product'">
+                  <div>
+                    <span class="product-name">{{ order?.product_name || 'Product name unavailable' }}</span>
+                    <span class="product-category">{{ order?.Category_name || 'No category' }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ order?.user_id || 'N/A' }}</td>
+              <td>{{ order?.quantity || 0 }}</td>
+              <td>Rs. {{ order?.price || 0 }}</td>
+              <td><strong>Rs. {{ (order?.price || 0) * (order?.quantity || 0) }}</strong></td>
+              <td><span class="status-pill"><i class="bi bi-check2-circle"></i>{{ order?.status_Name || 'Confirmed' }}</span></td>
+              <td>{{ order?.created_at || 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <ng-template #noOrdersAvailable>
+      <section class="empty-panel">
+        <div class="empty-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <span class="section-kicker">Analytics Ready</span>
+        <h2 class="section-title">No order list loaded yet</h2>
+        <p class="section-copy mb-0">
+          The dashboard graph is live from admin totals. When order records are loaded into <strong>filteredProductResponseList</strong>, they will appear here automatically.
+        </p>
+      </section>
+    </ng-template>
+  </div>
+</div>

@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
  token = '';
  userResponseList:any=[];
  role='' ;
+ user_Id: any ;
  rolename='' ;
  showRoleSelection = false;
 
@@ -50,7 +51,6 @@ setValidation(){
 }
 
 getUserDetails(){
-  debugger
   const userId = this._commonService.getUserId();
  this._userService.getUser(userId!).subscribe({
   next:(response:any)=>{
@@ -69,7 +69,6 @@ if(this.role === 'Admin'  ||  this.role == 'Super Admin'){
  });
 }
 onLogin(){
-
 if(this.loginForm.valid){
 this._authService.login(this.loginForm.value).subscribe({      
     next: (response: any) => {
@@ -78,16 +77,28 @@ this._authService.login(this.loginForm.value).subscribe({
      this._toastr.error(response[0].message, 'Warning');
       }
       const data = response[2].data;
-      const isChanged = data[1].isChanged;
     
+      debugger
+          localStorage.setItem('accessToken', data[0].accessToken);
+      const isChanged = this._commonService.getIsChanged();
+      
+      const isEmailVerifed = this._commonService.getIsEmail();
+  
       if(isChanged === 0){
          localStorage.setItem('accessToken', data[0].accessToken);
            this._router.navigateByUrl('/forgotpassword');
         this._toastr.warning('Please change your password', 'Warning');
-      
         return;
       }
-    localStorage.setItem('accessToken', data[0].accessToken);
+      if(isEmailVerifed ===0){
+        this._router.navigateByUrl('/verify-email');
+         this._toastr.warning('Please verify your Email first', 'Warning');
+        // const user_Id = this._commonService.getUserId;
+         this.sendOTP();
+
+        return;
+      }
+   
               this._toastr.success(response[0].message, 'Success');  
               this.getUserDetails();       
   },
@@ -102,4 +113,25 @@ this._authService.login(this.loginForm.value).subscribe({
 }
 this.loginForm.markAllAsTouched();
 }
+
+
+
+sendOTP(){
+
+ this.user_Id= this._commonService.getUserId();
+ localStorage.setItem('user_Id',this.user_Id);
+  this._authService.ResendOTP(this.user_Id).subscribe({next:(response:any) =>
+    {
+     if(response[1].status == "200"){
+           this._toastr.success(response[0].message, 'success'); 
+      }
+      this._toastr.error(response[0].message, 'Warning');
+      },
+      error: (error:any)=>{
+        this._toastr.error(error.error , 'error');
+      }
+    })
+    }   
+  
 }
+

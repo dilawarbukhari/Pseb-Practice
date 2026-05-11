@@ -7,11 +7,11 @@
   </div>
 
   <div class="sidebar-brand px-3 py-3">
-    <span class="brand-badge">
-      <span class="badge-glow"></span>
-      IMS
-    </span>
-    <span class="ms-2 brand-text">Inventory Management</span>
+ <span class="brand-badge">
+  <span class="badge-glow"></span>
+  <i class="fas fa-gem"></i> BEM
+</span>
+    <span class="ms-2 brand-text">Bukhari Mart</span>
   </div>
 
   <ul class="nav nav-pills flex-column px-2">
@@ -29,6 +29,7 @@
         <div class="nav-glow"></div>
       </a>
     </li>
+
     <li class="nav-item">
       <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Admin' || role === 'Super Admin'" routerLink="/pages/rolepermission">
         <i class="bi bi-shield-check nav-icon"></i>
@@ -58,7 +59,14 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" *ngIf=" role === 'Seller' || role === 'Super Admin' || role === 'Admin'"  routerLinkActive="active" routerLink="/pages/product">
+      <a class="nav-link"  *ngIf=" role === 'Super Admin' || role === 'Admin'" routerLinkActive="active" routerLink="/pages/productadmin">
+        <i class="bi bi-box-seam nav-icon"></i>
+        <span class="nav-text">Product Management Admin</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" *ngIf=" role === 'Seller'"  routerLinkActive="active" routerLink="/pages/product">
         <i class="bi bi-boxes nav-icon"></i>
         <span class="nav-text">Product Management</span>
         <div class="nav-glow"></div>
@@ -72,9 +80,23 @@
       </a>
     </li>
      <li class="nav-item">
-      <a class="nav-link" *ngIf="role === 'Seller' || role === 'Super Admin' || role === 'Admin'" routerLinkActive="active" routerLink="/pages/ordermanagement">
+      <a class="nav-link" *ngIf="role === 'Seller'" routerLinkActive="active" routerLink="/pages/ordermanagement">
         <i class="bi bi-receipt nav-icon"></i>
         <span class="nav-text">Order Management</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+       <li class="nav-item">
+      <a class="nav-link" *ngIf="role === 'Super Admin' || role === 'Admin'" routerLinkActive="active" routerLink="/pages/ordermanagementadmin">
+        <i class="bi bi-receipt nav-icon"></i>
+        <span class="nav-text">Admin Order Management</span>
+        <div class="nav-glow"></div>
+      </a>
+    </li>
+            <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" *ngIf="role === 'Buyer'" routerLink="/pages/trackorder">
+        <i class="bi bi-people nav-icon"></i>
+        <span class="nav-text">Track My Order</span>
         <div class="nav-glow"></div>
       </a>
     </li>

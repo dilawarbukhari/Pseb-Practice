@@ -1,0 +1,230 @@
+<section class="track-order-page">
+  <div class="container py-5">
+    <div class="tracking-hero mb-4">
+      <div>
+        <span class="eyebrow">Order Tracking</span>
+        <h1 class="page-title">Track My Order</h1>
+        <p class="page-copy mb-0">Stay updated with your order status, delivery progress, and shipment details.</p>
+      </div>
+
+      <div class="hero-status">
+        <span class="status-dot"></span>
+        <span>Track Ready</span>
+      </div>
+    </div>
+
+    <div class="tracking-shell">
+      <div class="tracking-search-panel">
+        <div class="search-copy">
+          <div class="panel-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+          <div>
+            <h2>Find your shipment</h2>
+            <p>Enter the order number from your confirmation receipt.</p>
+          </div>
+        </div>
+
+        <form class="tracking-form">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control" id="inputOrderTrackingID" name="searchText" [(ngModel)]="searchText"  placeholder="Example: TRK-2026-1842">
+            <button type="button" id="shopGetOrderStatusID" class="btn btn-track"  (click)="trackOrder()">
+              <i class="bi bi-arrow-right"></i>
+              Track
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="row g-4 align-items-stretch" *ngIf="trackResponseList && trackResponseList !== ''  && trackResponseList !== ' '">
+        <ng-container>
+        <div class="col-lg-8">
+          <div class="tracking-card h-100">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">Current Progress</span>
+                <h3>#{{trackResponseList.order_number}}</h3>
+               
+              </div>
+              <span class="progress-badge">
+                <i class="bi bi-truck"></i>
+              {{trackResponseList.status_name}}
+              </span>
+            </div>
+
+            <div class="progress-track" aria-label="Order progress">
+              <div class="progress-line">
+                <span></span>
+              </div>
+
+             <div class="tracking-wrapper">
+
+  <!-- Confirmed -->
+  <div 
+    class="track-step"
+    [ngClass]="{
+      'completed': trackResponseList.status_Id >= 1,
+      'active': trackResponseList.status_Id === 1
+    }"
+  >
+    <div class="step-icon">
+      <i class="bi" 
+         [ngClass]="trackResponseList.status_Id >= 1 ? 'bi-check-lg' : 'bi-box'">
+      </i>
+    </div>
+
+    <strong>Confirmed</strong>
+    <small>Order confirmed</small>
+  </div>
+
+  <!-- In Transit -->
+  <div 
+    class="track-step"
+    [ngClass]="{
+      'completed': trackResponseList.status_Id > 2,
+      'active': trackResponseList.status_Id === 2
+    }"
+  >
+    <div class="step-icon">
+      <i class="bi" 
+         [ngClass]="trackResponseList.status_Id >= 2 ? 'bi-check-lg' : 'bi-arrow-repeat'">
+      </i>
+    </div>
+
+    <strong>In Transit</strong>
+    <small>Packed by seller</small>
+  </div>
+
+  <!-- Shipped -->
+  <div 
+    class="track-step"
+    [ngClass]="{
+      'completed': trackResponseList.status_Id > 3,
+      'active': trackResponseList.status_Id === 3
+    }"
+  >
+    <div class="step-icon">
+      <i class="bi" 
+         [ngClass]="trackResponseList.status_Id >= 3 ? 'bi-check-lg' : 'bi-truck'">
+      </i>
+    </div>
+
+    <strong>Shipped</strong>
+    <small>On the way</small>
+  </div>
+
+  <!-- Delivered -->
+  <div 
+    class="track-step"
+    [ngClass]="{
+      'completed': trackResponseList.status_Id === 4,
+      'active': trackResponseList.status_Id === 4
+    }"
+  >
+    <div class="step-icon">
+      <i class="bi" 
+         [ngClass]="trackResponseList.status_Id === 4 ? 'bi-check-lg' : 'bi-house-check'">
+      </i>
+    </div>
+
+    <strong>Delivered</strong>
+    <small>Awaiting delivery</small>
+  </div>
+
+</div>
+            </div>
+            <div class="delivery-insights">
+              <div class="insight-item">
+                <span class="insight-icon">
+                  <i class="bi bi-shield-check"></i>
+                </span>
+                <div>
+                  <strong>Secure packaging</strong>
+                  <p>Your order is packed carefully before dispatch.</p>
+                </div>
+              </div>
+
+              <div class="insight-item">
+                <span class="insight-icon">
+                  <i class="bi bi-bell"></i>
+                </span>
+                <div>
+                  <strong>Status updates</strong>
+                  <p>Refresh with your tracking number to see the latest status.</p>
+                </div>
+              </div>
+
+              <div class="insight-item">
+                <span class="insight-icon">
+                  <i class="bi bi-headset"></i>
+                </span>
+                <div>
+                  <strong>Need help?</strong>
+                  <p>Keep your tracking ID ready when contacting support.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <aside class="tracking-summary h-100">
+            <div class="summary-top">
+              <span class="summary-icon">
+                <i class="bi bi-calendar2-check"></i>
+              </span>
+              <div>
+                <span class="eyebrow">Estimated Delivery</span>
+                <h3>May 07, 2026</h3>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <div>
+                <span>Created</span>
+                <strong>{{trackResponseList.created_at | date}}</strong>
+              </div>
+              <div>
+                <span>Last Update</span>
+                <strong>{{trackResponseList.updated_at |date}}</strong>
+              </div>
+              <div>
+                <span>Courier</span>
+                <strong>BEM Express</strong>
+              </div>
+              <div>
+                <span>Tracking ID</span>
+                <strong>{{trackResponseList.tracking_number}}</strong>
+              </div>
+            </div>
+
+            <div class="customer-note">
+              <span>Customer Note</span>
+              <p>Please call before delivery.</p>
+            </div>
+
+            <!-- <a class="tracking-link" href="//tracking/link/goes/here">
+              <i class="bi bi-link-45deg"></i>
+              Open courier tracking
+            </a> -->
+          </aside>
+        </div>
+     
+        </ng-container>
+      </div>
+
+      <div class="empty-tracking-state" *ngIf="trackResponseList == '' || trackResponseList == ' ' || !trackResponseList ">
+        <div class="empty-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <span class="eyebrow">Ready When You Are</span>
+        <h2>Track Your Order</h2>
+        <p>Enter your order number above and we will show the latest delivery progress here.</p>
+      </div>
+    </div>
+
+  </div>
+</section>

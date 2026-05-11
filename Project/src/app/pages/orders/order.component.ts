@@ -2,16 +2,18 @@ import { Component,OnInit } from '@angular/core';
 import { UserProductService } from '../../Service/userproduct.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 @Component({
   selector: 'app-order',
-  imports: [CommonModule],
+  imports: [CommonModule,NgxPaginationModule],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
 export class OrderComponent implements OnInit{
  orderResponseList:any=[];
-
+  p: number = 1;
   constructor(private _userProductService: UserProductService,private _toasterService: ToastrService) { }
 
   ngOnInit(): void {
@@ -20,6 +22,7 @@ export class OrderComponent implements OnInit{
 
 
 getAllOrders(){
+
   this._userProductService.getAllOrders().subscribe({
     next:(response:any)=>{
       debugger
@@ -52,7 +55,7 @@ cancelOrder(order: any): void {
     return;
   }
 
- this._userProductService.cancelOrder(order.order_Id).subscribe({
+ this._userProductService.cancelOrder(order).subscribe({
     next: (response: any) => {
       if(response[1].status !== 200){
       this._toasterService.error(response[0].message, 'Warning');

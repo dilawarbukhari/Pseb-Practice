@@ -3,12 +3,13 @@ import { CategoryService } from '../../Service/category.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { PermissionService } from '../../Service/permission.service';
 import { CommonService } from '../../Service/common.service';
 
 @Component({
   selector: 'app-permission',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule,NgxPaginationModule],
   templateUrl: './permission.component.html',
   styleUrl: './permission.component.css'
 })
@@ -18,7 +19,7 @@ permissionForm! :FormGroup;
   searchResponseList:any=[];
   permissionsResponseList:any =[];
   searchText :string = '';
-
+  p: number = 1;
 
   isEdit : boolean = true;
   permission_Id =0;

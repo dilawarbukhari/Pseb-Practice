@@ -4,12 +4,13 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../Service/user.service';
 import { RoleService } from '../../Service/role.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { UpdateUserRequest } from '../../Interface/updateUser';
 import { CommonService } from '../../Service/common.service';
 
 @Component({
   selector: 'app-usermanagement',
-  imports: [ReactiveFormsModule,CommonModule,FormsModule],
+  imports: [ReactiveFormsModule,CommonModule,FormsModule,NgxPaginationModule],
   templateUrl: './usermanagement.component.html',
   styleUrl: './usermanagement.component.css'
 })
@@ -19,6 +20,7 @@ userForm! :FormGroup;
   roleResponseList:any=[];
   searchResponseList:any=[];
   searchText :string = '';
+    p: number = 1;
 
 updateUserRequest :UpdateUserRequest;
   isEdit : boolean = true;

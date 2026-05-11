@@ -118,7 +118,7 @@
     <div class="dashboard-section recent-orders">
       <div class="section-header">
         <h2 class="section-title">Recent Orders</h2>
-        <a href="#" class="view-all-link">View All →</a>
+        <!-- <a href="#" class="view-all-link">View All →</a> -->
       </div>
       <div class="orders-table">
         <div class="table-header">
@@ -160,8 +160,8 @@
     <!-- Top Products Section -->
     <div class="dashboard-section top-products">
       <div class="section-header">
-        <h2 class="section-title">Top Products</h2>
-        <a href="#" class="view-all-link">View All →</a>
+        <h2 class="section-title">Top Selling Products</h2>
+        <!-- <a href="#" class="view-all-link">View All →</a> -->
       </div>
       <div class="products-list">
         <div *ngIf="topProducts && topProducts.length > 0; else noProducts" class="products-container">
@@ -196,7 +196,7 @@
     <div class="dashboard-section user-stats">
       <div class="section-header">
         <h2 class="section-title">User Management</h2>
-        <a href="#" class="view-all-link">Manage Users →</a>
+        <!-- <a href="#" class="view-all-link">Manage Users →</a> -->
       </div>
       <div class="user-stats-content">
         <div class="stat-row">
@@ -220,7 +220,7 @@
     <div class="dashboard-section category-stats">
       <div class="section-header">
         <h2 class="section-title">Category Overview</h2>
-        <a href="#" class="view-all-link">Manage Categories →</a>
+        <!-- <a href="#" class="view-all-link">Manage Categories →</a> -->
       </div>
       <div class="category-stats-content">
         <div class="category-item" *ngFor="let category of topCategories">
@@ -276,16 +276,17 @@
         <h2 class="section-title">Quick Actions</h2>
       </div>
       <div class="actions-grid">
-        <button class="action-btn action-users" title="Manage Users">
+        <button class="action-btn action-users" title="Manage Users" routerLink="/pages/user">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
+      
           <span>Users</span>
         </button>
-        <button class="action-btn action-products" title="Manage Products">
+        <button class="action-btn action-products" title="Manage Products" routerLink="/pages/productadmin">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
             <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -293,7 +294,7 @@
           </svg>
           <span>Products</span>
         </button>
-        <button class="action-btn action-orders" title="View Orders">
+        <button class="action-btn action-orders" title="View Orders" routerLink="/pages/ordermanagementadmin">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <circle cx="9" cy="21" r="1"></circle>
             <circle cx="20" cy="21" r="1"></circle>
