@@ -969,7 +969,9 @@ $this->emailServer->sendOTP($email,$otp);
         $email = $input['email'];
         $password = $input['password'];
         $role_Id = $input['role'];
+        $bankName = $input['bankName'] ?? ' ';
       $bankAccount  = $input['bankAccount'] ?? ' ';
+      
       $businessName = $input['businessName'] ?? ' ';
       $cnic   = (int)($input['cnic'] ?? '');
       $shopAddress  = $input['shopAddress'] ?? ' ';
@@ -1060,6 +1062,7 @@ $this->emailServer->sendOTP($email,$otp);
                 }
 
          if (
+        empty($bankName)||
     empty($bankAccount) ||
     empty($businessName) ||
     empty($cnic) ||
@@ -1073,9 +1076,9 @@ $this->emailServer->sendOTP($email,$otp);
 }
 // var_dump($bankAccount, $businessName, $cnic, $shopAddress, $taxId);
 //  die;
-               $sql  = "INSERT INTO signup (Firstname,Lastname,Email,Password,role_Id,Business_Name,CNIC,Bank_account ,Shop_address,Tax_Id, created_by, created_at,isChanged) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+               $sql  = "INSERT INTO signup (Firstname,Lastname,Email,Password,role_Id,Business_Name,CNIC,bankName,Bank_account ,Shop_address,Tax_Id, created_by, created_at,isChanged) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $query = $this->conn->prepare($sql);
-            $query->bind_param("ssssisissiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $businessName, $cnic, $bankAccount, $shopAddress, $taxId, $created_by, $created_at, $isChanged);
+            $query->bind_param("ssssisisssiisi", $firstname, $lastName, $email, $hashpassowrd, $role_Id, $businessName, $cnic,$bankName, $bankAccount, $shopAddress, $taxId, $created_by, $created_at, $isChanged);
             $query->execute();
             if ($query->affected_rows > 0) {                    
                 $otp = rand(10000,99999);

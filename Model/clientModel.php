@@ -15,6 +15,92 @@ class clientModel extends db
         $this->_config = new Config();
     }
 
+     public function generateSpecificSaleReport($input)
+    {
+        if (!$this->checkToken($this->getBearerToken())) {
+            return [['message' => 'Please login again'], ["status" => "400"]];
+        }
+        $seller_Id = $this->getUserId($this->getBearerToken());
+        $fromDate= $input['fromDate'];
+        $toDate= $input['toDate'];
+        $sql = "
+SELECT  
+    p.product_name,
+    DATE(oi.created_at) AS sale_date,
+    SUM(oi.quantity) AS totalSold,
+    SUM(oi.quantity * oi.price) AS revenue
+FROM order_items oi
+JOIN products p 
+    ON p.product_Id = oi.product_Id
+WHERE p.seller_Id = ?
+    AND Date(oi.created_at) Between ?  And  ?
+GROUP BY oi.product_Id, DATE(oi.created_at)
+ORDER BY totalSold DESC;";
+$stmt = $this->conn->prepare($sql);
+
+$stmt->bind_param("iss", $seller_Id,$fromDate,$toDate);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+$totalRevenue = 0;
+$html = '
+
+<h2>Seller Product Sales Report</h2>
+
+<table border="1" width="100%" cellpadding="10" style="border-collapse: collapse; border: 1px solid #000;">
+
+<tr>
+    <th>Product name</th>
+    <th>Sales date</th>
+    <th>Total Sold</th>
+    <th>Revenue</th>
+</tr>
+';
+
+while($row = $result->fetch_assoc()){
+  $totalRevenue += $row['revenue'];
+    $html .= '
+
+    <tr>
+        <td>'.$row['product_name'].'</td>
+        <td>'.$row['sale_date'].'</td>
+        <td>'.$row['totalSold'].'</td>
+        <td>Rs '.$row['revenue'].'</td>
+    </tr>
+    ';
+}
+    $html .= '
+<tr>
+    <td colspan="3" style="text-align:right; font-weight:bold;">
+        Total Revenue
+    </td>
+    <td style="font-weight:bold;">
+        Rs '.$totalRevenue.'
+    </td>
+</tr>
+';
+
+
+$html .= '</table>';
+
+$dompdf = new Dompdf();
+
+$dompdf->loadHtml($html);
+
+$dompdf->setPaper('A4', 'portrait');
+
+$dompdf->render();
+
+$pdfOutput = $dompdf->output();
+return [
+    "status" => 200,
+    "fileName" => "seller-report.pdf",
+    "pdfBase64" => base64_encode($pdfOutput)
+];
+
+    }
+
     public function getReviewStatus($input)
     {
         $order_Id = $input['order_Id'];
@@ -32,8 +118,7 @@ class clientModel extends db
             ];
         }
     }
-
-    public function generateSaleReport()
+   public function generateWeeklySaleReport()
     {
         if (!$this->checkToken($this->getBearerToken())) {
             return [['message' => 'Please login again'], ["status" => "400"]];
@@ -44,7 +129,14 @@ SELECT
     p.product_name,
     DATE(oi.created_at) AS sale_date,
     SUM(oi.quantity) AS totalSold,
-    SUM(oi.quantity * oi.price) AS revenue FROM order_items oi  JOIN products p ON p.product_Id = oi.product_Id WHERE p.seller_Id = ? GROUP BY oi.product_Id ORDER BY totalSold DESC";
+    SUM(oi.quantity * oi.price) AS revenue
+FROM order_items oi
+JOIN products p 
+    ON p.product_Id = oi.product_Id
+WHERE p.seller_Id = ?
+    AND YEARWEEK(oi.created_at, 1) = YEARWEEK(CURRENT_DATE(), 1)
+GROUP BY oi.product_Id, DATE(oi.created_at)
+ORDER BY totalSold DESC;";
 $stmt = $this->conn->prepare($sql);
 
 $stmt->bind_param("i", $seller_Id);
@@ -52,15 +144,16 @@ $stmt->bind_param("i", $seller_Id);
 $stmt->execute();
 
 $result = $stmt->get_result();
-
+$totalRevenue = 0;
 $html = '
 
 <h2>Seller Product Sales Report</h2>
 
-<table border="1" width="100%" cellpadding="10">
+<table border="1" width="100%" cellpadding="10" style="border-collapse: collapse; border: 1px solid #000;">
 
 <tr>
-    <th>Product</th>
+    <th>Product name</th>
+    <th>Sales date</th>
     <th>Total Sold</th>
     <th>Revenue</th>
 </tr>
@@ -68,16 +161,279 @@ $html = '
 
 while($row = $result->fetch_assoc()){
 
+ $totalRevenue += $row['revenue'];
     $html .= '
 
     <tr>
         <td>'.$row['product_name'].'</td>
+        <td>'.$row['sale_date'].'</td>
         <td>'.$row['totalSold'].'</td>
         <td>Rs '.$row['revenue'].'</td>
     </tr>
     ';
 }
 
+
+ $html .= '
+<tr>
+    <td colspan="3" style="text-align:right; font-weight:bold;">
+        Total Revenue
+    </td>
+    <td style="font-weight:bold;">
+        Rs '.$totalRevenue.'
+    </td>
+</tr>
+';
+
+$html .= '</table>';
+
+$dompdf = new Dompdf();
+
+$dompdf->loadHtml($html);
+
+$dompdf->setPaper('A4', 'portrait');
+
+$dompdf->render();
+
+$pdfOutput = $dompdf->output();
+return [
+    "status" => 200,
+    "fileName" => "seller-report.pdf",
+    "pdfBase64" => base64_encode($pdfOutput)
+];
+
+    }
+   public function generateYearlySaleReport()
+    {
+        if (!$this->checkToken($this->getBearerToken())) {
+            return [['message' => 'Please login again'], ["status" => "400"]];
+        }
+        $seller_Id = $this->getUserId($this->getBearerToken());
+        $sql = "
+SELECT  
+    p.product_name,
+    DATE(oi.created_at) AS sale_date,
+    SUM(oi.quantity) AS totalSold,
+    SUM(oi.quantity * oi.price) AS revenue
+FROM order_items oi
+JOIN products p 
+    ON p.product_Id = oi.product_Id
+WHERE p.seller_Id = ?
+    AND YEAR(oi.created_at) = YEAR(CURRENT_DATE())
+GROUP BY oi.product_Id, DATE(oi.created_at)
+ORDER BY totalSold DESC";
+$stmt = $this->conn->prepare($sql);
+
+$stmt->bind_param("i", $seller_Id);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+$totalRevenue = 0;
+
+$html = '
+
+<h2>Seller Product Sales Report</h2>
+
+<table border="1" width="100%" cellpadding="10" style="border-collapse: collapse; border: 1px solid #000;">
+
+<tr>
+    <th>Product name</th>
+    <th>Sales date</th>
+    <th>Total Sold</th>
+    <th>Revenue</th>
+</tr>
+';
+
+while($row = $result->fetch_assoc()){
+ $totalRevenue += $row['revenue'];
+    $html .= '
+
+    <tr>
+        <td>'.$row['product_name'].'</td>
+        <td>'.$row['sale_date'].'</td>
+        <td>'.$row['totalSold'].'</td>
+        <td>Rs '.$row['revenue'].'</td>
+    </tr>
+    ';
+}
+
+ $html .= '
+<tr>
+    <td colspan="3" style="text-align:right; font-weight:bold;">
+        Total Revenue
+    </td>
+    <td style="font-weight:bold;">
+        Rs '.$totalRevenue.'
+    </td>
+</tr>
+';
+$html .= '</table>';
+
+$dompdf = new Dompdf();
+
+$dompdf->loadHtml($html);
+
+$dompdf->setPaper('A4', 'portrait');
+
+$dompdf->render();
+
+$pdfOutput = $dompdf->output();
+return [
+    "status" => 200,
+    "fileName" => "seller-report.pdf",
+    "pdfBase64" => base64_encode($pdfOutput)
+];
+
+    }
+
+    public function generateMonthlySaleReport()
+    {
+        if (!$this->checkToken($this->getBearerToken())) {
+            return [['message' => 'Please login again'], ["status" => "400"]];
+        }
+        $seller_Id = $this->getUserId($this->getBearerToken());
+        $sql = "
+SELECT  
+    p.product_name,
+    DATE(oi.created_at) AS sale_date,
+    SUM(oi.quantity) AS totalSold,
+    SUM(oi.quantity * oi.price) AS revenue
+FROM order_items oi
+JOIN products p 
+    ON p.product_Id = oi.product_Id
+WHERE p.seller_Id = ?
+    AND MONTH(oi.created_at) = MONTH(CURDATE())
+    AND YEAR(oi.created_at) = YEAR(CURDATE())
+GROUP BY oi.product_Id, DATE(oi.created_at)
+ORDER BY totalSold DESC";
+$stmt = $this->conn->prepare($sql);
+
+$stmt->bind_param("i", $seller_Id);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+$totalRevenue = 0;
+$html = '
+
+<h2>Seller Product Sales Report</h2>
+
+<table border="1" width="100%" cellpadding="10" style="border-collapse: collapse; border: 1px solid #000;">
+
+<tr>
+    <th>Product name</th>
+    <th>Sales date</th>
+    <th>Total Sold</th>
+    <th>Revenue</th>
+</tr>
+';
+
+while($row = $result->fetch_assoc()){
+ $totalRevenue += $row['revenue'];
+    $html .= '
+
+    <tr>
+        <td>'.$row['product_name'].'</td>
+        <td>'.$row['sale_date'].'</td>
+        <td>'.$row['totalSold'].'</td>
+        <td>Rs '.$row['revenue'].'</td>
+    </tr>
+    ';
+}
+ $html .= '
+<tr>
+    <td colspan="3" style="text-align:right; font-weight:bold;">
+        Total Revenue
+    </td>
+    <td style="font-weight:bold;">
+        Rs '.$totalRevenue.'
+    </td>
+</tr>
+';
+$html .= '</table>';
+
+$dompdf = new Dompdf();
+
+$dompdf->loadHtml($html);
+
+$dompdf->setPaper('A4', 'portrait');
+
+$dompdf->render();
+
+$pdfOutput = $dompdf->output();
+return [
+    "status" => 200,
+    "fileName" => "seller-report.pdf",
+    "pdfBase64" => base64_encode($pdfOutput)
+];
+
+    }
+    public function generateDailySaleReport()
+    {
+        if (!$this->checkToken($this->getBearerToken())) {
+            return [['message' => 'Please login again'], ["status" => "400"]];
+        }
+        $seller_Id = $this->getUserId($this->getBearerToken());
+        $sql = "
+SELECT  
+    p.product_name,
+    DATE(oi.created_at) AS sale_date,
+    SUM(oi.quantity) AS totalSold,
+    SUM(oi.quantity * oi.price) AS revenue
+FROM order_items oi
+JOIN products p 
+    ON p.product_Id = oi.product_Id
+WHERE p.seller_Id = ?   
+    AND DATE(oi.created_at) = CURRENT_DATE()
+GROUP BY oi.product_Id, DATE(oi.created_at)
+ORDER BY totalSold DESC;";
+$stmt = $this->conn->prepare($sql);
+
+$stmt->bind_param("i", $seller_Id);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+$totalRevenue = 0;
+$html = '
+
+<h2>Seller Product Sales Report</h2>
+
+<table border="1" width="100%" cellpadding="10" style="border-collapse: collapse; border: 1px solid #000;">
+
+<tr>
+    <th>Product</th>
+    <th>Sales date</th>
+    <th>Total Sold</th>
+    <th>Revenue</th>
+</tr>
+';
+
+while($row = $result->fetch_assoc()){
+
+ $totalRevenue += $row['revenue'];
+    $html .= '
+
+    <tr>
+        <td>'.$row['product_name'].'</td>
+          <td>'.$row['sale_date'].'</td>
+        <td>'.$row['totalSold'].'</td>
+        <td>Rs '.$row['revenue'].'</td>
+    </tr>
+    ';
+}
+
+ $html .= '
+<tr>
+    <td colspan="3" style="text-align:right; font-weight:bold;">
+        Total Revenue
+    </td>
+    <td style="font-weight:bold;">
+        Rs '.$totalRevenue.'
+    </td>
+</tr>
+';
 $html .= '</table>';
 
 $dompdf = new Dompdf();
@@ -227,7 +583,7 @@ Where o.tracking_number =?';
     {
         $UserId = $this->getUserId($this->getBearerToken());
 
-        $sql = "SELECT COUNT(DISTINCT o.order_Id) AS total_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Pending' THEN o.order_Id END) AS pending_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Shipped' THEN o.order_Id END) AS shipped_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Delivered' THEN o.order_Id END) AS delivered_orders FROM orders o INNER JOIN order_items oi ON o.order_Id = oi.order_Id INNER JOIN products p ON p.product_Id = oi.product_Id INNER JOIN product_users pu ON pu.product_Id = p.product_Id LEFT JOIN status s ON oi.status_Id = s.status_Id WHERE pu.user_Id = ? AND pu.isDeleted = false AND o.IsDeleted = false AND oi.isCancelled = false AND oi.IsDeleted = false AND p.IsDeleted = false;
+        $sql = "SELECT COUNT(DISTINCT o.order_Id) AS total_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Confirmed' THEN o.order_Id END) AS pending_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Shipped' THEN o.order_Id END) AS shipped_orders, COUNT(DISTINCT CASE WHEN s.status_Name = 'Delivered' THEN o.order_Id END) AS delivered_orders FROM orders o INNER JOIN order_items oi ON o.order_Id = oi.order_Id INNER JOIN products p ON p.product_Id = oi.product_Id INNER JOIN product_users pu ON pu.product_Id = p.product_Id LEFT JOIN status s ON oi.status_Id = s.status_Id WHERE pu.user_Id = ? AND pu.isDeleted = false AND o.IsDeleted = false AND oi.isCancelled = false AND oi.IsDeleted = false AND p.IsDeleted = false;
 ";
         $query = $this->conn->prepare($sql);
         $query->bind_param('i', $UserId);
