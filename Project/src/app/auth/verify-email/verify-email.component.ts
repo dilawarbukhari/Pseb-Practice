@@ -25,7 +25,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.startResendCountdown();
-     this.SetValidation()
+     this.SetValidation();
   }
 
   ngOnDestroy(): void {

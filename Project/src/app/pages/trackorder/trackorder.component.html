@@ -57,7 +57,7 @@
 
             <div class="progress-track" aria-label="Order progress">
               <div class="progress-line">
-                <span></span>
+                <span [style.--progress-value]="getProgressPercent() + '%'"></span>
               </div>
 
              <div class="tracking-wrapper">

@@ -56,8 +56,10 @@ if(error.error?.response){
   } } })
 }
 getTotalrecord(){
+
 this._productService.Totalrecord().subscribe({
     next:(response:any)=>{
+        debugger
       this.PendingOrder = response.data[0].pending_orders;
       this.ShippedOrder=response.data[0].shipped_orders;
       this.TotalOrder=response.data[0].total_orders;
@@ -87,6 +89,7 @@ getAllStatus(){
 
 
 onSearchChange() {
+  debugger
   this.p = 1;
   const term = this.searchTerm.trim().toLowerCase();
   if (!term) {
@@ -97,9 +100,8 @@ onSearchChange() {
       order.order_number.toLowerCase().includes(term) ||
     order.product_name.toLowerCase().includes(term) ||
     order.Category_name.toLowerCase().includes(term) ||
-    order.user_id.toString().toLowerCase().includes(term) ||
     order.status_Name.toLowerCase().includes(term)
-   
+
   );
 }
 
@@ -120,9 +122,10 @@ updateStatus(product: any) {
       this._toasterService.error(response[0].message, 'Warning');
         }
         this._toasterService.success(response[0].message, 'Success');
-        this.getPendingOrder();
-        this.getShippedOrder();
-        this.getDeliveredOrder();
+        // this.getPendingOrder();
+        // this.getShippedOrder();
+        // this.getDeliveredOrder();
+      this.getTotalrecord();
         this.getAllProduct();
     },
     error: (error) => {
@@ -179,13 +182,30 @@ getStatusColor(status: string): string {
 
 // Get status icon
 getStatusIcon(status: string): string {
-  const statusIcons: { [key: string]: string } = {
-    'Confirmed': 'check-circle-fill',
-    'Processing': 'hourglass-split',
-    'Shipped': 'truck',
-    'Delivered': 'box-seam',
-    'Cancelled': 'x-circle-fill'
-  };
-  return statusIcons[status] || 'info-circle';
+
+  switch ((status || '').toLowerCase()) {
+
+    case 'confirmed':
+      return 'patch-check-fill';
+
+    case 'shipped':
+      return 'box-seam-fill';
+
+    case 'intransit':
+    case 'in transit':
+      return 'truck';
+
+    case 'delivered':
+      return 'check-circle-fill';
+
+    case 'cancelled':
+      return 'x-circle-fill';
+
+    case 'pending':
+      return 'clock-fill';
+
+    default:
+      return 'info-circle-fill';
+  }
 }
 }

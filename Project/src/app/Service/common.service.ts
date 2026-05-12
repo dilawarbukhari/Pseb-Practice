@@ -19,13 +19,12 @@ export class CommonService {
     modal.hide();
   }
 
-  // 🔥 FIX: Remove leftover backdrop manually
   setTimeout(() => {
     document.body.classList.remove('modal-open');
 
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach(el => el.remove());
-  }, 300); // wait for animation
+  }, 300);
 }
 
  getIsChanged():number | null  {

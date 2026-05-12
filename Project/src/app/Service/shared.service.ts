@@ -29,4 +29,26 @@ generateSaleReport():Observable<any>{
   }
 return this._http.post<any>(this.Url,data);
 }
+generateWeeklySaleReport():Observable<any>{
+  const data={
+    process : 'generateWeeklySaleReport'
+  }
+return this._http.post<any>(this.Url,data);
 }
+generateMonthlySaleReport():Observable<any>{
+  const data={
+    process : 'generateMonthlySaleReport'
+  }
+return this._http.post<any>(this.Url,data);
+}
+generateYearlySaleReport():Observable<any>{
+  const data={
+    process : 'generateYearlySaleReport'
+  }
+return this._http.post<any>(this.Url,data);
+}
+generateSpecificSaleReport(data:any):Observable<any>{
+return this._http.post<any>(this.Url,data);
+}
+}
+
