@@ -42,6 +42,7 @@ SellerDetailsForm(){
   this.sellerDetailsForm = this._fb.group({
     businessName: ['', [Validators.required]],
     cnic: ['', [Validators.required]],
+    bankName:  ['', [Validators.required]],
     bankAccount: ['', [Validators.required]],
     shopAddress: ['', [Validators.required]],
     taxId: ['', [Validators.required]]

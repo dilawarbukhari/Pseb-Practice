@@ -20,6 +20,8 @@ import { OrderdetailComponent } from './pages/orderdetail/orderdetail.component'
 import { ProductdetailComponent } from './pages/productdetail/productdetail.component';
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 import { TrackorderComponent } from './pages/trackorder/trackorder.component';
+import { FeedbackComponent } from './feedback/feedback.component';
+import { InvoicemanagementComponent } from './pages/invoicemanagement/invoicemanagement.component';
 
 
 
@@ -30,6 +32,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
    {path:'verify-email',component:VerifyEmailComponent},
   { path: '', component: LoginComponent },
+  {path : 'feedback/:orderId', component:FeedbackComponent},
 
   {
     path: 'pages',
@@ -45,6 +48,7 @@ export const routes: Routes = [
       { path: 'userproduct', component: UserproductComponent },
       { path: 'myorders', component: OrderComponent },
      { path:'trackorder', component:TrackorderComponent},
+     { path:'invoice', component:InvoicemanagementComponent},
      { path: 'ordermanagementadmin', component: OrderdetailComponent },
        { path: 'ordermanagement', component: OrdermanagementComponent },
       { path: 'settings', component: SettingComponent },

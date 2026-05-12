@@ -25,7 +25,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.startResendCountdown();
-     this.SetValidation()
+     this.SetValidation();
   }
 
   ngOnDestroy(): void {
@@ -69,10 +69,7 @@ if(!this.otpFrom.invalid){
       }
     })
     }
-      
       }
-
-
  ResendOTP(){
   debugger
    this.user_Id = Number(localStorage.getItem('user_Id'));

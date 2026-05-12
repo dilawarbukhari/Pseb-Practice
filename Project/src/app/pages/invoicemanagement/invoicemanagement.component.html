@@ -1,0 +1,116 @@
+<div class="invoice-management">
+  <section class="report-header">
+    <div>
+      <span class="eyebrow">Sales Reports</span>
+      <h1>Invoice Management</h1>
+      <p>Export sales reports from backend by daily, weekly, monthly, or yearly period.</p>
+    </div>
+
+    <button class="refresh-btn" type="button" title="Refresh report data" (click)="refresh()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Refresh
+    </button>
+  </section>
+
+ <section class="filter-panel">
+  <div class="filter-title">
+    <i class="bi bi-funnel"></i>
+    <div>
+      <h2>Report Filters</h2>
+      <p>Select dates before exporting your backend sales report.</p>
+    </div>
+  </div>
+
+  <div class="filter-controls">
+
+    <label class="field">
+      <span>From Date</span>
+      <input type="date"  [(ngModel)]="fromDate" />
+    </label>
+
+    <label class="field">
+      <span>To Date</span>
+      <input type="date" [(ngModel)]="toDate" />
+    </label>
+
+    <label class="field">
+      <span>Format</span>
+      <select>
+        <option value="pdf">PDF</option>
+      </select>
+    </label>
+
+    <!-- Export Button -->
+   <div class="export-btn">
+  <button type="button" class="download-btn" (click)="downloadReport()">
+    <i class="bi bi-file-earmark-arrow-down"></i>
+    <span>Export Report</span>
+  </button>
+</div>
+
+  </div>
+</section>
+
+  <section class="report-grid">
+    <article class="report-card daily-report">
+      <div class="report-icon">
+        <i class="bi bi-calendar-day"></i>
+      </div>
+      <div class="report-content">
+        <span class="report-kicker">Today</span>
+        <h2>Daily Sales Report</h2>
+        <p>Export invoices and sales summary for selected day.</p>
+      </div>
+      <button class="export-btn" type="button" (click)="generateSaleReport()">
+        <i class="bi bi-download"></i>
+        Export Daily
+      </button>
+    </article>
+
+    <article class="report-card weekly-report">
+      <div class="report-icon">
+        <i class="bi bi-calendar-week"></i>
+      </div>
+      <div class="report-content">
+        <span class="report-kicker">7 Days</span>
+        <h2>Weekly Sales Report</h2>
+        <p>Export weekly sales totals, invoices, and order revenue.</p>
+      </div>
+      <button class="export-btn" type="button" (click)="generateWeeklySaleReport()">
+        <i class="bi bi-download"></i>
+        Export Weekly
+      </button>
+    </article>
+
+    <article class="report-card monthly-report">
+      <div class="report-icon">
+        <i class="bi bi-calendar-month"></i>
+      </div>
+      <div class="report-content">
+        <span class="report-kicker">Month</span>
+        <h2>Monthly Sales Report</h2>
+        <p>Export monthly sale report for account review and records.</p>
+      </div>
+      <button class="export-btn" type="button" (click)="generateMonthlySaleReport()">
+        <i class="bi bi-download"></i>
+        Export Monthly
+      </button>
+    </article>
+
+    <article class="report-card yearly-report">
+      <div class="report-icon">
+        <i class="bi bi-calendar3"></i>
+      </div>
+      <div class="report-content">
+        <span class="report-kicker">Year</span>
+        <h2>Yearly Sales Report</h2>
+        <p>Export full year sales report with complete invoice history.</p>
+      </div>
+      <button class="export-btn" type="button" (click)="generateYearlySaleReport()">
+        <i class="bi bi-download"></i>
+        Export Yearly
+      </button>
+    </article>
+  </section>
+
+</div>

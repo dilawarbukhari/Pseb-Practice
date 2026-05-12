@@ -19,13 +19,12 @@ export class CommonService {
     modal.hide();
   }
 
-  // 🔥 FIX: Remove leftover backdrop manually
   setTimeout(() => {
     document.body.classList.remove('modal-open');
 
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach(el => el.remove());
-  }, 300); // wait for animation
+  }, 300);
 }
 
  getIsChanged():number | null  {
@@ -54,4 +53,26 @@ export class CommonService {
     const decode:any = jwtDecode(getToken);
     return decode.$userId ?? null;
   }
+ getPdf(pdfFile: string) {
+
+  const byteCharacters = atob(pdfFile);
+
+  const byteNumbers = new Array(byteCharacters.length);
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);
+
+  const blob = new Blob(
+    [byteArray],
+    { type: 'application/pdf' }
+  );
+
+  const url = window.URL.createObjectURL(blob);
+
+  window.open(url, '_blank');
+
+}
 }

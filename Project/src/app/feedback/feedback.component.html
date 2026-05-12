@@ -1,0 +1,100 @@
+<div class="modal feedback-modal fade show" tabindex="-1" aria-modal="true" role="dialog" [style.display]="showFeedbackModal ? 'block' : 'none'">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content feedback-modal-content">
+      <div class="modal-header feedback-modal-header">
+        <div>
+          <span class="eyebrow">Customer Feedback</span>
+          <h1 class="modal-title">Share Your Experience</h1>
+          <p class="modal-copy mb-0">Tell us what went well and where we can improve your shopping journey.</p>
+        </div>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeFeedbackModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="feedback-layout">
+          <div class="feedback-card">
+            <div class="card-heading">
+              <span class="heading-icon">
+                <i class="bi bi-chat-square-heart"></i>
+              </span>
+              <div>
+                <span class="eyebrow">Feedback Form</span>
+                <h2>How was your order?</h2>
+              </div>
+            </div>
+
+            <form class="feedback-form">
+              <div class="rating-panel">
+                <span class="rating-label">Overall rating</span>
+                <div class="rating-stars" aria-label="Rating">
+                  <button type="button" class="star-btn" [class.active]="rating >= 1" (click)="setRating(1)" aria-label="Rate 1 star">
+                    <i class="bi" [class.bi-star-fill]="rating >= 1" [class.bi-star]="rating < 1"></i>
+                  </button>
+                  <button type="button" class="star-btn" [class.active]="rating >= 2" (click)="setRating(2)" aria-label="Rate 2 stars">
+                    <i class="bi" [class.bi-star-fill]="rating >= 2" [class.bi-star]="rating < 2"></i>
+                  </button>
+                  <button type="button" class="star-btn" [class.active]="rating >= 3" (click)="setRating(3)" aria-label="Rate 3 stars">
+                    <i class="bi" [class.bi-star-fill]="rating >= 3" [class.bi-star]="rating < 3"></i>
+                  </button>
+                  <button type="button" class="star-btn" [class.active]="rating >= 4" (click)="setRating(4)" aria-label="Rate 4 stars">
+                    <i class="bi" [class.bi-star-fill]="rating >= 4" [class.bi-star]="rating < 4"></i>
+                  </button>
+                  <button type="button" class="star-btn" [class.active]="rating >= 5" (click)="setRating(5)" aria-label="Rate 5 stars">
+                    <i class="bi" [class.bi-star-fill]="rating >= 5" [class.bi-star]="rating < 5"></i>
+                  </button>
+                </div>
+                <input type="hidden" name="rating" [value]="rating">
+                <span class="rating-value">{{ rating }}/5</span>
+              </div>
+
+              <div class="form-field">
+                <label for="feedbackMessage">Your Feedback</label>
+                <textarea id="feedbackMessage" class="form-control message-box" name="feedbackdetail" rows="5" placeholder="Write your feedback here..." [(ngModel)]="feedbackdetail"></textarea>
+              </div>
+
+              <button type="button" class="btn submit-feedback" (click)="Feedback()">
+                <i class="bi bi-send"></i>
+                Submit Feedback
+              </button>
+            </form>
+          </div>
+
+          <aside class="feedback-sidebar">
+            <div class="support-card highlight">
+              <span class="support-icon">
+                <i class="bi bi-lightning-charge"></i>
+              </span>
+              <h3>Fast Review</h3>
+              <p>Feedback helps us improve products, delivery, and support quality.</p>
+            </div>
+
+            <div class="support-card">
+              <span class="support-icon">
+                <i class="bi bi-shield-check"></i>
+              </span>
+              <h3>Privacy First</h3>
+              <p>Your details stay protected and are only used to improve service.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal feedback-modal fade show" tabindex="-1" aria-modal="true" role="dialog" [style.display]="showThankYouModal ? 'block' : 'none'">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content thankyou-modal-content">
+      <div class="thankyou-icon">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+      <h2>Feedback Submitted</h2>
+      <p>Thank you for sharing your experience with us.</p>
+      <button type="button" class="btn submit-feedback" (click)="closeThankYouModal()">
+        Done
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="showFeedbackModal || showThankYouModal"></div>
