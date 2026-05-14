@@ -4,10 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonService } from '../../Service/common.service';
 import { UserService } from '../../Service/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-setting',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,RouterModule],
   templateUrl: './setting.component.html',
   styleUrl: './setting.component.css'
 })

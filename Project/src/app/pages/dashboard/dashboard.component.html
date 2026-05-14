@@ -137,7 +137,7 @@
               <span class="customer-name">{{order.Firstname }} {{order.Lastname }}</span>
             </div>
             <div class="table-col col-amount">
-              <span class="amount">${{ order.total_amount || '0' }}</span>
+              <span class="amount">Rs.{{ order.total_amount || '0' }}</span>
             </div>
             <div class="table-col col-status">
               <span class="status-badge" [class]="'status-' + (order.order_status || 'pending' | lowercase)">

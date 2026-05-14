@@ -26,6 +26,30 @@ export class CommonService {
     backdrops.forEach(el => el.remove());
   }, 300);
 }
+openModal(modalId: string): void {
+  const modalElement = document.getElementById(modalId);
+  if (modalElement) {
+    const modal =
+      bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+  }
+  setTimeout(() => {
+    document.body.classList.add('modal-open');
+
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+  if (backdrops.length > 1) {
+
+      backdrops.forEach((el, index) => {
+
+        if (index !== backdrops.length - 1) {
+          el.remove();
+        }
+
+      });
+    }
+
+  }, 300);
+}
 
  getIsChanged():number | null  {
     const getToken= this.getToken();
