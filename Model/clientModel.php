@@ -808,7 +808,7 @@ Where o.tracking_number =?';
     }
     public function getTotalProduct()
     {
-        $sql = "Select count(*) as total_products from products where IsDeleted = false and isCancelled=false;";
+        $sql = "Select count(*) as total_products from products where IsDeleted = false";
         $query = $this->conn->prepare($sql);
         $query->execute();
         $result = $query->get_result();

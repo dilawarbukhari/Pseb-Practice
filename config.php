@@ -278,7 +278,7 @@ public function sendemail($email, $password)
     </p>
 
     <div style="text-align:center; margin-top:25px;">
-        <a href="http://yourwebsite.com/login" 
+        <a href="http://localhost:4200/" 
            style="background:#3498db; color:#fff; padding:10px 20px; text-decoration:none; border-radius:5px;">
            Login Now
         </a>

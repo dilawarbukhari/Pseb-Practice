@@ -20,15 +20,28 @@ if (strpos($contentType, "application/json") !== false) {
         ? json_decode($_POST['data'], true) 
         : $_POST;
     $file = $_FILES['image'] ?? null;
-    //  var_dump( $file);
-    //  die;
 }
 
 $process= $input['process'];
-    
 $controller = new Controller();
 $client = new clientController();
 switch ($process){
+  case 'ResendforgotOTP':
+     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+   case 'ForgotPassword':
+     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'verifyforgetPasswordOtp':
+     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
+  case 'forgotPasswordOTP':
+     $response = $controller->simplifyLogic($input);
+    echo $response;
+    break;
 case 'generateSpecificSaleReport':
          $response = $client->checkCondition($input);
     echo $response;

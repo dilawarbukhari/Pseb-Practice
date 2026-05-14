@@ -832,7 +832,29 @@ public function addProduct($input, $file = null)
         ]
     ];
 }
+public function ResendforgotOTP($input){
+$email = $input['email'];
+ $user = $this->getUser($email);
+ $user_Id= $user['Id'];
+ $otp = rand(10000,99999);
+ $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));  
+$sql = "Update user_otps Set forgotPasswordOtp=? ,fotgotPasswordExpiry=?  where user_Id= ? ";
+$query= $this->conn->prepare($sql);
+$query->bind_param('isi',$otp,$expiry,$user_Id);
+$query->execute();
+if($query->affected_rows>0){
 
+$get= $this->getEmail($user_Id);
+$email= $get['email'];
+
+
+$this->emailServer->sendOTP($email,$otp); 
+ return [
+        ['message' => 'OTP has been resend on your email address'],
+        ['status' => '200'],
+ ];
+}
+}
 public function ResendOTP($input){
  $user_Id= $input['user_Id'];
  $otp = rand(10000,99999);
@@ -871,6 +893,87 @@ $this->emailServer->sendOTP($email,$otp);
         ['status' => '200'],
  ];
 }
+ public function ForgotPassword($input)
+    {    
+         $email= $input['email'];
+       
+        $password = $input['newPassword'];
+        $checkpassword = $input['confirmPassword'];
+        $updated_at = date('Y-m-d H:i:s', time());
+        $updated_by = !empty($this-> getBearerToken())
+            ? $this->getUserId($this-> getBearerToken())
+            : 0;
+        $hashpassword = password_hash($password, PASSWORD_DEFAULT);
+        if ($password !== $checkpassword) {
+            return [
+                ['message' => 'Password not match'],
+                ['status' => '400']
+            ];
+        }
+        if (strlen($password) < 8) {
+
+            return [
+                ['message' => 'Password must be at least 8 characters long'],
+                ['status' => '400']
+            ];
+        }
+        if (!preg_match('/[A-Z]/', $password))
+            return [
+                ['message' => 'Password must contain uppercase'],
+                ['status' => '400']
+            ];
+        if (!preg_match('/[a-z]/', $password))
+            return [
+                ['message' => 'Password must contain lowercase'],
+                ['status' => '400']
+            ];
+        if (!preg_match('/[0-9]/', $password))
+            return [
+                ['message' => 'Password must contain number'],
+                ['status' => '400']
+            ];
+        if (!preg_match('/[\W_]/', $password))
+            return [
+                ['message' => 'Password must contain special char'],
+                ['status' => '400']
+            ];
+        $sql = "SELECT email, Password FROM signup WHERE email = ?";
+        $query = $this->conn->prepare($sql);
+        $query->bind_param("s", $email);
+        $query->execute();
+        $result = $query->get_result();
+        $row = $result->fetch_assoc();
+        $oldemail = $row['email'];
+        $oldPassword=$row['Password'];
+        if (strtolower($oldemail) !== strtolower($email)){
+            return [
+                ['message' => 'Email not found'],
+                ['status' => '400']
+            ];
+         }
+      if(password_verify($password, $oldPassword)){
+            return [
+                ['message' => 'New password cannot be the same as the old password'],
+                ['status' => '400']
+            ];
+        }
+        $sql = "UPDATE signup SET Password = ? , updated_at = ?, updated_by = ?
+         WHERE email = ?";
+        $query = $this->conn->prepare($sql);
+        $query->bind_param("ssis", $hashpassword, $updated_at, $userId, $email);
+        $query->execute();
+
+        if (!$query->affected_rows > 0) {
+            return [
+                ['message' => 'Password updated failed'],
+                ['status' => '200']
+            ];
+        }      
+             return [
+                ['message' => 'Password update Successfully'],
+                ['status' => '200']
+            ];       
+    }
     public function changePassword($input)
     {    
          $email= $input['email'];
@@ -1122,6 +1225,93 @@ $this->emailServer->sendOTP($email,$otp);
         return [['message' => 'All Fields are required'], ['status' => '400']];
     
     }
+   public function forgotPasswordOTP($input){
+    $email= $input['email'];
+  $sql= 'Select email , Id from signup where email = ? And isDeleted != true;'; 
+  $query= $this->conn->prepare($sql);
+  $query->bind_param('s',$email);
+  $query->execute();
+  $result= $query->get_result();
+  if($result->num_rows>0){
+    $row= $result->fetch_assoc();
+    $user_Id= $row['Id'];
+
+     $otp = rand(10000,99999);
+     $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));
+     $sql = 'Select user_Id from user_otps where user_Id = ?';
+     $query->bind_param('i',$user_Id);
+     $query->execute();
+     if($query->affected_rows==0){
+          $result->free();
+            $query->close();
+     $sql= "Insert into user_otps (user_Id,forgotPasswordOtp,fotgotPasswordExpiry) values (?,?,?)";
+    $query= $this->conn->prepare($sql);
+    $query->bind_param('iis', $user_Id,$otp,$expiry);
+    $query->execute();
+    if($query->affected_rows>0){
+     $this->emailServer->sendOTP($email,$otp);
+    return [[
+        'message'=> 'OTP has been on your email address'
+    ],['status'=> '200']];
+     }
+     }
+       $result->free();
+            $query->close();
+    $sql= "update user_otps Set forgotPasswordOtp =?, fotgotPasswordExpiry=? where user_Id = ?";
+    $query= $this->conn->prepare($sql);
+    $query->bind_param('isi', $otp,$expiry,$user_Id);
+    $query->execute();
+    if($query->affected_rows>0){
+     $this->emailServer->sendOTP($email,$otp);
+    return [[
+        'message'=> 'OTP has been on your email address'
+    ],['status'=> '200']];
+    }
+
+  }
+   return [[
+        'message'=> 'Something Went Wrong'
+    ],['status'=> '400']];
+ 
+  }
+  public function verifyforgetPasswordOtp($input){
+    // var_dump($input);
+    // die;
+    $otp = $input['otpNumber']; 
+    $email = $input['email'];
+    ((int)$user_Id = $this->getUser($email));
+    $user_Id = $user_Id['Id'];
+    $sql = "SELECT fotgotPasswordExpiry FROM user_otps WHERE user_Id = ? AND forgotPasswordOtp = ?";
+    $query = $this->conn->prepare($sql);
+    $query->bind_param('ii', $user_Id, $otp);
+    $query->execute();
+
+    $result = $query->get_result();
+    // var_dump($result);
+    // die;
+    if ($result->num_rows == 0) {
+        return [
+            ['message' => 'Please enter the correct OTP'],
+            ['status' => '400']
+        ];
+    }
+    $row = $result->fetch_assoc();
+    $expirytoken = new DateTime($row['fotgotPasswordExpiry']);
+    $currentTime = new DateTime();
+
+    if ($currentTime > $expirytoken) {
+        return [
+            ['message' => 'Your OTP has expired. Please request a new one.'],
+           [ 'status' => '400']
+        ];
+    }
+
+        return [
+            ['message' => 'Email has been verified'],
+           [ 'status' => '200']
+        ];
+    } 
+
     
 public function verifyOtp($input){
 
@@ -1466,6 +1656,15 @@ private function getEmail($user_Id){
  $sql= "Select email from signup where Id = ? ";
 $query= $this->conn->prepare($sql);
 $query->bind_param('i', $user_Id);
+$result=$query->execute();
+$result=$query->get_result();
+$row= $result->fetch_assoc();
+ return $row;
+    }
+private function getUser($email){
+ $sql= "Select Id from signup where email = ? ";
+$query= $this->conn->prepare($sql);
+$query->bind_param('s', $email);
 $result=$query->execute();
 $result=$query->get_result();
 $row= $result->fetch_assoc();

@@ -6,7 +6,22 @@ class Controller extends Model
     public function simplifyLogic(array $input, $file = null){
       $process= $input['process'];
       switch ($process){
-
+      case 'ResendforgotOTP':
+          $data=$this->ResendforgotOTP($input);
+            return json_encode($data);
+            break;
+       case 'verifyforgetPasswordOtp':
+          $data=$this->verifyforgetPasswordOtp($input);
+            return json_encode($data);
+            break;
+             case 'ForgotPassword':
+          $data=$this->ForgotPassword($input);
+            return json_encode($data);
+            break;
+               case 'forgotPasswordOTP':
+          $data=$this->forgotPasswordOTP($input);
+            return json_encode($data);
+            break;
       case 'ResendOTP':
            $data = $this->ResendOTP($input);
           return json_encode($data);
