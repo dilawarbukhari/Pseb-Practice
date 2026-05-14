@@ -7,8 +7,25 @@ public function checkCondition($input){
     // die;
     $process=$input['process'];
     switch($process){
+        
+         case 'generateSpecificSaleReport':
+          $data=$this->generateSpecificSaleReport($input);
+            return json_encode($data);
+            break;
+      case 'generateYearlySaleReport':
+          $data=$this->generateYearlySaleReport();
+            return json_encode($data);
+            break;
+        case 'generateMonthlySaleReport':
+          $data=$this->generateMonthlySaleReport();
+            return json_encode($data);
+            break;
+         case 'generateWeeklySaleReport':
+          $data=$this->generateWeeklySaleReport();
+            return json_encode($data);
+            break;  
         case 'generateSaleReport':
-          $data=$this->generateSaleReport();
+          $data=$this->generateDailySaleReport();
             return json_encode($data);
             break;  
         case 'getReviewStatus':

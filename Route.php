@@ -28,7 +28,23 @@ $process= $input['process'];
     
 $controller = new Controller();
 $client = new clientController();
-switch ($process) {
+switch ($process){
+case 'generateSpecificSaleReport':
+         $response = $client->checkCondition($input);
+    echo $response;
+    break;
+case 'generateYearlySaleReport':
+         $response = $client->checkCondition($input);
+    echo $response;
+    break;
+case 'generateMonthlySaleReport':
+         $response = $client->checkCondition($input);
+    echo $response;
+    break;
+  case 'generateWeeklySaleReport':
+         $response = $client->checkCondition($input);
+    echo $response;
+    break;
   case 'generateSaleReport':
          $response = $client->checkCondition($input);
     echo $response;
