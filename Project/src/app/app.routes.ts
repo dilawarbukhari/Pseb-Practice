@@ -22,12 +22,15 @@ import { VerifyEmailComponent } from './auth/verify-email/verify-email.component
 import { TrackorderComponent } from './pages/trackorder/trackorder.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { InvoicemanagementComponent } from './pages/invoicemanagement/invoicemanagement.component';
+import { ResetpasswordComponent } from './auth/resetpassword/resetpassword.component';
 
 
 
 export const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
+  { path: 'reset', component: ResetpasswordComponent },
+  { path: 'forgot', component: ForgetpasswordComponent },
   { path: 'forgotpassword', component: ForgetpasswordComponent },
   { path: 'register', component: RegisterComponent },
    {path:'verify-email',component:VerifyEmailComponent},

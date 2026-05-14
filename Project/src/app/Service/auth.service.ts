@@ -47,4 +47,36 @@ export class AuthService {
   };
     return this.http.post<any>(this.Url, payload);
 }
+forgotPassword(data:any):Observable<any>{
+    const payload = {
+    ...data,  
+    process: 'forgotPasswordOTP'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
+  verifyforgetPasswordOtp(data:string,email:string):Observable<any>{
+    debugger
+    const payload = {
+    otpNumber:data, 
+    email:email,
+    process: 'verifyforgetPasswordOtp'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
+ForgotPassword(data:any,email:string):Observable<any>{
+    const payload = {
+    ...data,  
+    email: email,
+    process: 'ForgotPassword'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
+ResendforgotOTP(email:string):Observable<any>{
+    debugger
+    const payload = { 
+    email:email,
+    process: 'ResendforgotOTP'
+  };
+    return this.http.post<any>(this.Url, payload);
+}
 }
